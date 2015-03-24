@@ -2,6 +2,8 @@ from flask import Flask
 import os
 from config import basedir
 from flask.ext.sqlalchemy import SQLAlchemy
+import sqlite3
+from flask.ext.login import LoginManager
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 
@@ -12,9 +14,16 @@ app.debug = True
 
 app.config.from_object('config')
 
-manager = Manager(app)
-bootstrap = Bootstrap(app)
-db = SQLAlchemy(app)
+#manager = Manager(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
+bootstrap = Bootstrap(app)
+
+#sqlite3.connect(os.path.abspath("app.db"))
+db = SQLAlchemy(app)
+#is this the right spot?
+db.create_all()
 
 from app import views, models # avoid circular references

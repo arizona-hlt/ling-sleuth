@@ -3,6 +3,8 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block page_content -%}
-<h2>Welcome to Ling Sleuth!</h2>  
+<div class="center-block">
+<h2>Welcome to Ling Sleuth!</h2>
 <a href= {{ url_for('cases')}}>Take a case</a> or <a href= {{ url_for('learn')}}>learn some new skills</a>
+</div>
 {%- endblock page_content %}

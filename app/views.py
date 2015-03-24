@@ -1,12 +1,22 @@
-from flask import render_template, flash, redirect, session, url_for, request, g, make_response, send_file, send_from_directory, Response
 import os
-#from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, db
-from .forms import LoginForm
+from flask import render_template, flash, redirect, session, url_for, request, g, make_response, send_file, send_from_directory, Response
+from flask.ext.login import login_user , logout_user , current_user , login_required
+from app import app, db, login_manager
+from .forms import LoginForm, RegisterForm
 from .models import User
 from config import basedir
 
 UPLOADS_DIR = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+
+# who is the current user?
+@app.before_request
+def before_request():
+    g.user = current_user
+
+# for handling user data
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 @app.route('/')
 @app.route('/index')
@@ -14,10 +24,48 @@ def index():
     return render_template('index.html',
                            title='Welcome')
 
-@app.route('/login')
+
+@app.route('/register' , methods=['GET','POST'])
+def register():
+    form = RegisterForm()
+
+    if request.method == 'POST' and form.validate():
+        user = User(request.form['username'] , request.form['password'], request.form['email'])
+        db.session.add(user)
+        db.session.commit()
+        flash('User successfully registered')
+        return redirect(url_for('login'))
+
+    return render_template('register.html', title ='Register', form=form)
+
+
+@app.route('/login',methods=['GET','POST'])
 def login():
-    return render_template('login.html',
-                           title='Login')
+    form = LoginForm()
+    if request.method == 'POST' and form.validate():
+
+        form = request.form
+
+        username = request.form['username']
+        password = request.form['password']
+
+        registered_user = User.query.filter_by(username=username,password=password).first()
+        if registered_user is None:
+            flash('Username or Password is invalid' , 'error')
+            return redirect(url_for('login'))
+        login_user(registered_user)
+        flash('Logged in successfully')
+        return redirect(request.args.get('next') or url_for('index'))
+    #must be a GET...
+    return render_template('login.html', title ='Log in', form=form)
+
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash("Bye for now!")
+    return redirect(url_for('index'))
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -27,10 +75,19 @@ def page_not_found(error):
 #def special_exception_handler(error):
 #    return 'Database connection failed', 500
 
+
+###Other stuff
+
 @app.route('/about')
 def about():
     return render_template('about.html',
                            title='About')
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html',
+                           title='Profile')
 
 @app.route('/cases')
 def cases():
@@ -43,6 +100,7 @@ def learn():
                            title='Learn')
 
 @app.route('/knowledge')
+@login_required
 def knowledge():
     return render_template('knowledge.html',
                            title='Unlocked Skillz!')
