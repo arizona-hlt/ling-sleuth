@@ -10,10 +10,17 @@
 {% block styles -%}
 {{super()}}
 <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
+<!-- Custom CSS -->
+<style>
+    body {
+        padding-top: 70px;
+        /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    }
+</style>
 {%- endblock styles %}
 
 {% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -29,7 +36,7 @@
 			    <li><a href="{{ url_for('index') }}"><span class="fa fa-user-secret"> Home</span></a></li>
 				<li><a href="{{ url_for('cases') }}"><span class="fa fa-archive"> Cases</span></a></li>
 				<li><a href="{{ url_for('learn') }}"><span class="fa fa-book"> Learn</span></a></li>
-				<li><a href="{{ url_for('knowledge') }}"><span class="fa fa-lightbulb-o"> Skillz</span></a></li> 
+				<li><a href="{{ url_for('knowledge') }}"><span class="fa fa-lightbulb-o"> Skillz</span></a></li>
 			</ul>
             <ul class="nav navbar-nav navbar-right">
 				<li>
