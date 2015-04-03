@@ -37,7 +37,7 @@ class User(db.Model):
 
 
 class Rank(db.Model):
-    id = db.Colum(db.Integer,primary_key=True)
+    id = db.Column(db.Integer,primary_key=True)
     rank = db.Column(db.String(20), index=True, unique=True)
     users = db.relationship('User', backref='rank')
 
