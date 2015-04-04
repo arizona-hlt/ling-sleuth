@@ -5,11 +5,11 @@ from datetime import datetime
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column('user_id',db.Integer , primary_key=True)
-    username = db.Column(db.String(20), unique=True , index=True)
-    password = db.Column('password' , db.String(10))
+    username = db.Column('username', db.String(20), unique=True , index=True)
+    password = db.Column('password', db.String(10))
     email = db.Column('email',db.String(50),unique=True , index=True)
     registered_on = db.Column('registered_on' , db.DateTime)
-    rank_id = db.Column(db.Integer, db.ForeignKey('rank.id'))
+    # rank_id = db.Column(db.Integer, db.ForeignKey('rank.id'))
 
     def __init__(self, username ,password , email):
         self.username = username
@@ -36,16 +36,16 @@ class User(db.Model):
         return '<User %r>' % (self.nickname)
 
 
-class Rank(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    rank = db.Column(db.String(20), index=True, unique=True)
-    users = db.relationship('User', backref='rank')
+# class Rank(db.Model):
+#     id = db.Column(db.Integer,primary_key=True)
+#     rank = db.Column(db.String(20), index=True, unique=True)
+#     users = db.relationship('User', backref='rank')
 
-    def __init__(self, rank):
-        self.rank = rank
+#     def __init__(self, rank):
+#         self.rank = rank
 
-    def __repr__(self):
-        return '<Rank %r>' % (self.rank)
+#     def __repr__(self):
+#         return '<Rank %r>' % (self.rank)
 
 ################################################################
 class UserOld(db.Model):

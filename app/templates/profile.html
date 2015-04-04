@@ -1,9 +1,30 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Profile{% endblock %}
 
+{% block styles -%}
+{{ super() }}
+<link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
+{%- endblock styles %}
+
 {% block page_content -%}
-<div class="center-block">
-<h2>This is {{current_user.username }}'s profile</h2>
-</div>
+
+
+<h1>{{current_user.username }}'s Profile</h1>
+
+
+<dl>
+    <dt>Username:</dt>
+    <dd>{{current_user.username}}</dd>
+    <dt>Rank:</dt>
+    <dd>pooShoe</dd>
+	<dt>Next Rank:</dt>
+	<dd>a-poo-rentice</dd>
+    <dt>Latest Skill:</dt>
+    <dd>poo-Merge</dd>
+    <dt>Next Skill:</dt>
+    <dd>poo-Escape-Hatch</dd>
+</dl>
+
 {%- endblock page_content %}
