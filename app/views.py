@@ -46,7 +46,7 @@ def login():
     form = LoginForm()
     if request.method == "GET":
         return render_template("login.html", form=form)
-    if request.method == "POST":
+    if request.method == "POST" and form.validate():
         submitted_form = request.form
 
         username = submitted_form['username']
