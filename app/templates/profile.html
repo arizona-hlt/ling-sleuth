@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block page_content -%}
+<div class="center-block">
+<h2>This is {{current_user.username }}'s profile</h2>
+</div>
+{%- endblock page_content %}
