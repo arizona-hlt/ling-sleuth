@@ -1,5 +1,5 @@
 # ling-sleuth
-
+Learn a little linguistics
 ## How to run the app
 ## Install `virtualenv` for python 2.7.x
 
@@ -18,13 +18,35 @@ From the project directory, `source venv/bin/activate`
 After activating the vm, make sure you have all of the necessary dependencies installed.  Simply type:  
 `pip install -r requirements.txt`
 
-### 3) Run the web app locally
+## Setting up the database
+
+We're using `Flask-Migrate` to handle changes to the database models.
+
+### First-time setup of database
+
+`python manage.py db init`
+
+This will create a database
+
+### Handling the initial migration
+
+`python manage.py db migrate`
+
+### Handling subsequent migrations
+
+`python manage.py db upgrade`
+
+### Learn more
+
+`python manage.py db --help`
+
+## Running the web app locally
 
   1. From the project directory, type:  
 `./run.py`  
-  2. In your browser, navigate to `http://localhost:5000`
+  2. In your browser, navigate to [`http://localhost:5000`](http://localhost:5000)
 
-### 4) Adding dependencies
+## Adding dependencies
 
 Install a new package:  
 
@@ -34,6 +56,7 @@ Update `requirements.txt`:
 `pip freeze > requirements.txt`
 
 Be careful not to add unnecessary dependencies to `requirements.txt`
+
 ## Exiting the virtual environment
 
 `deactivate`
