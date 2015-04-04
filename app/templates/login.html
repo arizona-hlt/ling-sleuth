@@ -2,5 +2,5 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
-{{ wtf.quick_form(form,form_type="horizontal", extra_classes="col-sm-4") }}
+{{ wtf.quick_form(form,form_type="horizontal", horizontal_columns=('lg', 2, 2)) }}
 {% endblock content %}
