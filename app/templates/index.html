@@ -4,7 +4,15 @@
 
 {% block page_content -%}
 <div class="center-block">
-<h2>Welcome to Ling Sleuth!</h2>
-<a href= {{ url_for('cases')}}>Take a case</a> or <a href= {{ url_for('learn')}}>learn some new skills</a>
+{% if current_user.is_authenticated() %}
+  <h2>Welcome back, {{ current_user.username}}!</h2>
+  You're logged in!
+{% else %}
+  <h2>Welcome to Ling Sleuth!</h2>
+  <ul>
+    <li><h4><a href= {{ url_for('register')}}>Register</a> or <a href= {{ url_for('login')}}>login</a></h4></li>
+  </ul>
+{% endif %}
+<h4><a href= {{ url_for('cases')}}>Take a case</a> or <a href= {{ url_for('learn')}}>learn some new skills</a></h4>
 </div>
 {%- endblock page_content %}
