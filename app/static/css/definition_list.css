@@ -1,0 +1,22 @@
+/* Definition List*/
+dl {
+    width: 40%;
+    margin: 0 auto;
+    float: left;
+    padding: 5em;
+}
+
+dt,dd {
+    display: inline-block;
+    /* or you could use:
+    float: left;
+    */
+}
+
+dt {
+    width: 30%;
+}
+
+dd {
+    width: 65%;
+}

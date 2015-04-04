@@ -1,12 +1,12 @@
 from flask import Flask
+from flask.ext.login import LoginManager
 import os
 from config import basedir
-from flask.ext.sqlalchemy import SQLAlchemy
 import sqlite3
-from flask.ext.login import LoginManager
+from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
-
+from flask.ext.migrate import Migrate, MigrateCommand
 
 
 app = Flask(__name__)
@@ -24,6 +24,6 @@ bootstrap = Bootstrap(app)
 #sqlite3.connect(os.path.abspath("app.db"))
 db = SQLAlchemy(app)
 #is this the right spot?
-db.create_all()
+#db.create_all()
 
 from app import views, models # avoid circular references

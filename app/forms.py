@@ -1,6 +1,5 @@
 from flask.ext.wtf import Form
 from wtforms import TextField, StringField, HiddenField, PasswordField, SubmitField
-#from flask.ext.wtf import validators
 from wtforms.validators import *
 from wtforms.fields.html5 import EmailField
 
@@ -8,6 +7,7 @@ class LoginForm(Form):
     username = StringField('Username', id='username', validators=[InputRequired("Forgetting something?")])
     password = PasswordField('Password', id='password', validators=[Required()])
     submit = SubmitField('Log in', id='login')
+
 
 class RegisterForm(Form):
     #name = StringField('Name', id='name')

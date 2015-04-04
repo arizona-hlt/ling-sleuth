@@ -1,12 +1,14 @@
-import os
-from flask import render_template, flash, redirect, session, url_for, request, g, make_response, send_file, send_from_directory, Response
+from flask import render_template, flash, redirect, session, url_for, request, g, make_response, send_file, abort, send_from_directory, Response, Markup
 from flask.ext.login import login_user , logout_user , current_user , login_required
 from app import app, db, login_manager
 from .forms import LoginForm, RegisterForm
 from .models import User
 from config import basedir
+import os
+import logging
 
 UPLOADS_DIR = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+
 
 # who is the current user?
 @app.before_request
@@ -42,22 +44,26 @@ def register():
 @app.route('/login',methods=['GET','POST'])
 def login():
     form = LoginForm()
-    if request.method == 'POST' and form.validate():
+    if request.method == "GET":
+        return render_template("login.html", form=form)
+    if request.method == "POST":
+        submitted_form = request.form
 
-        form = request.form
-
-        username = request.form['username']
-        password = request.form['password']
-
+        username = submitted_form['username']
+        password = submitted_form['password']
+        # login and validate the user...
         registered_user = User.query.filter_by(username=username,password=password).first()
-        if registered_user is None:
-            flash('Username or Password is invalid' , 'error')
-            return redirect(url_for('login'))
-        login_user(registered_user)
-        flash('Logged in successfully')
-        return redirect(request.args.get('next') or url_for('index'))
-    #must be a GET...
-    return render_template('login.html', title ='Log in', form=form)
+        if registered_user:
+            app.logger.info("{0} is a registered user.".format(username))
+            login_user(registered_user)
+            flash("Logged in successfully.")
+            return redirect(request.args.get("next") or url_for("index"))
+        else:
+            app.logger.info("{0} is not a registered user.".format(username))
+            flash("There was a problem...")
+            # TODO: change this form to
+
+    return render_template('login.html',title ='Log in', form=form)
 
 
 
@@ -86,7 +92,7 @@ def about():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html',
+     return render_template('profile.html',
                            title='Profile')
 
 @app.route('/cases')
