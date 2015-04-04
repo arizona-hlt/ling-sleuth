@@ -86,8 +86,9 @@ def about():
 @app.route('/profile')
 @login_required
 def profile():
+    profile_username = current_user.username
     return render_template('profile.html',
-                           title='Profile')
+                           title='Profile',user=profile_username)
 
 @app.route('/cases')
 def cases():

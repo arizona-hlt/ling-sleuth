@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+
+<link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
+
+<h1>Profile</h1>
+
+
+<dl>
+    <dt>Username:</dt>
+    <dd>{{user}}</dd>
+    <dt>Rank:</dt>
+    <dd>pooShoe</dd>
+	<dt>Next Rank:</dt>
+	<dd>a-poo-rentice</dd>
+    <dt>Latest Skill:</dt>
+    <dd>poo-Merge</dd>
+    <dt>Next Skill:</dt>
+    <dd>poo-Escape-Hatch</dd>
+</dl>
+
+
+{% endblock content %}
