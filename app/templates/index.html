@@ -10,7 +10,7 @@
 {% else %}
   <h2>Welcome to Ling Sleuth!</h2>
   <ul>
-    <li><h4><a href= {{ url_for('register')}}>Register</a> or <a href= {{ url_for('login')}}>login</a></h4></li>
+    <li><h4><a href= {{ url_for('login')}}>login</a> with <a href='login/google'>Google</a></h4></li>
   </ul>
 {% endif %}
 <h4><a href= {{ url_for('cases')}}>Take a case</a> or <a href= {{ url_for('learn')}}>learn some new skills</a></h4>

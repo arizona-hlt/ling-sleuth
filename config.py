@@ -1,3 +1,6 @@
+from authomatic.adapters import WerkzeugAdapter
+from authomatic import Authomatic
+from secret import CONFIG
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -11,6 +14,8 @@ ALLOWED_EXTENSIONS = set(['txt', 'csv', 'png', 'jpg', 'jpeg', 'json'])
 
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'poop'
+
+authomatic = Authomatic(CONFIG, SECRET_KEY, report_errors=False)
 
 #OPENID_PROVIDERS = [
 #    {'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id'},

@@ -4,6 +4,8 @@ from app import app, db, login_manager
 from .forms import LoginForm, RegisterForm
 from .models import User
 from config import basedir
+from authomatic.adapters import WerkzeugAdapter
+from config import authomatic #used for oauth2 stuff
 import os
 import logging
 
@@ -26,44 +28,37 @@ def index():
     return render_template('index.html',
                            title='Welcome')
 
+@app.route('/login/<provider_name>/', methods=['GET', 'POST'])
+def login_with_provider(provider_name):
+    """
+    Login handler, must accept both GET and POST to be able to use OpenID.
+    """
+    print "CONFIG info:\n{}".format(app.config["CONFIG"])
+    # We need response object for the WerkzeugAdapter.
+    response = make_response()
 
-@app.route('/register' , methods=['GET','POST'])
-def register():
-    form = RegisterForm()
+    # Log the user in, pass it the adapter and the provider name.
+    result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
 
-    if request.method == 'POST' and form.validate():
-        user = User(request.form['username'] , request.form['password'], request.form['email'])
-        db.session.add(user)
-        db.session.commit()
-        flash('User successfully registered')
-        return redirect(url_for('login'))
+    # If there is no LoginResult object, the login procedure is still pending.
+    if result:
+        if result.user:
+            # We need to update the user to get more info.
+            result.user.update()
+            handle_user(result)
+            # TODO: register user if needed.
+            app.logger.info("{0} is a logged in via {1}.".format(result.user.name, provider_name))
+        # The rest happens inside the template.
+        #result.user.data.x will return further user data
+        return render_template('login-test.html', result=result)
 
-    return render_template('register.html', title ='Register', form=form)
-
+    # Don't forget to return the response.
+    return response
 
 @app.route('/login',methods=['GET','POST'])
 def login():
-    form = LoginForm()
-    if request.method == "GET":
-        return render_template("login.html", form=form)
-    if request.method == "POST" and form.validate():
-        submitted_form = request.form
-
-        username = submitted_form['username']
-        password = submitted_form['password']
-        # login and validate the user...
-        registered_user = User.query.filter_by(username=username,password=password).first()
-        if registered_user:
-            app.logger.info("{0} is a registered user.".format(username))
-            login_user(registered_user)
-            flash("Logged in successfully.")
-            return redirect(request.args.get("next") or url_for("index"))
-        else:
-            app.logger.info("{0} is not a registered user.".format(username))
-            flash("There was a problem...")
-            # TODO: change this form to
-
-    return render_template('login.html',title ='Log in', form=form)
+    # Choose a login provider
+    return render_template('login.html')
 
 
 
@@ -117,6 +112,17 @@ def serve_file(filename):
                        mimetype="text/plain",
                        headers={"Content-Disposition":
                                     "attachment;filename={0}".format(filename)})
+
+
+def handle_user(result):
+    # is the user registered?
+    registered_user = User.query.filter(User.username == result.user.name, User.email == result.user.email).first()
+    # register if necessary...
+    if not registered_user:
+        registered_user = register_user(result)
+        db.session.add(user)
+        db.session.commit()
+    login_user(registered_user)
 
 if __name__ == '__main__':
     app.debug = True

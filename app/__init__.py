@@ -23,7 +23,6 @@ bootstrap = Bootstrap(app)
 
 #sqlite3.connect(os.path.abspath("app.db"))
 db = SQLAlchemy(app)
-#is this the right spot?
 #db.create_all()
 
 from app import views, models # avoid circular references
