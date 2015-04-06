@@ -49,3 +49,4 @@ lib64
 
 #Flask
 secret.py
+app.db
