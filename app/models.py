@@ -35,7 +35,7 @@ class User(db.Model):
         return 'http://www.gravatar.com/avatar/%s?d=mm&s=%d' % (md5(self.email.encode('utf-8')).hexdigest(), size)
 
     def __repr__(self):
-        return '<User %r>' % (self.nickname)
+        return '<User %r>' % (self.username)
 
 
 class Rank(db.Model):
@@ -44,7 +44,7 @@ class Rank(db.Model):
     rank = db.Column('rank',db.String(20), index=True, unique=True)
     default = db.Column('default',db.Boolean, default=False, index=True)
     permissions = db.Column('permissions',db.Integer)
-    # users = db.relationship('User', backref='rank')
+    users = db.relationship('User', backref='rank', lazy='dynamic')
 
     # def __init__(self, rank):
     #     self.rank = rank
@@ -75,11 +75,9 @@ class Rank(db.Model):
 
         for r in self.user_ranks:
             print self.user_ranks[r], 'hi'
-            try:
-                level = Rank.query.filter_by(rank=r).first()
-            except Exception as e:
-                print e
-            # if level is None:
+            # try:
+            level = Rank.query.filter_by(rank=r).first()
+            if level is None:
                 level = Rank(rank=r)
             level.permissions = self.user_ranks[r][0]
             level.default = self.user_ranks[r][1]
@@ -125,28 +123,3 @@ class Skills:  #holds dict, where modules are keys, val=list the length of # of 
             'Morphology'    :   [-1]*3,
             'Computational' :   [-1]*7
     }
-
-################################################################
-class UserOld(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nickname = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return unicode(self.id)  # python 2
-
-    def avatar(self, size):
-        return 'http://www.gravatar.com/avatar/%s?d=mm&s=%d' % (md5(self.email.encode('utf-8')).hexdigest(), size)
-
-    def __repr__(self):
-        return '<User %r>' % (self.nickname)
-
