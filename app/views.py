@@ -120,9 +120,14 @@ def handle_user(result):
     # register if necessary...
     if not registered_user:
         registered_user = register_user(result)
-        db.session.add(user)
-        db.session.commit()
     login_user(registered_user)
+
+def register_user(result):
+    user = User(username=result.user.name, provider=result.provider.name, email=result.user.email)
+    db.session.add(user)
+    db.session.commit()
+    flash("You've been registered!")
+    return user
 
 if __name__ == '__main__':
     app.debug = True
