@@ -1,9 +1,10 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, StringField, HiddenField, PasswordField, SubmitField
+from wtforms import TextField, StringField, HiddenField, PasswordField, SubmitField, SelectField
 from wtforms.validators import *
 from wtforms.fields.html5 import EmailField
 
 class LoginForm(Form):
+    provider = SelectField(u'Log in with...', choices = [("google","Google"), ("gh","GitHub"), ("fb","FaceBook")], validators = [Required()])
     username = StringField('Username', id='username', validators=[InputRequired("Forgetting something?")])
     password = PasswordField('Password', id='password', validators=[Required()])
     submit = SubmitField('Log in', id='login')

@@ -46,3 +46,6 @@ lib64
 
 #texpad
 .tpbuild
+
+#Flask
+secret.py
