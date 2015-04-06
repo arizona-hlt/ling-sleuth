@@ -53,7 +53,6 @@
                       {% if not g.user.is_authenticated()%}
                       <li class="divider"></li>
                       <li><a href="{{ url_for('login') }}"><span class="fa fa-sign-in"> Login</span></a></li>
-                      <li><a href="{{ url_for('register') }}">Register</a></li>
                     </ul>
                       {% endif %}
                   </li>
