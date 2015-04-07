@@ -16,7 +16,3 @@ WTF_CSRF_ENABLED = True
 SECRET_KEY = 'poop'
 
 authomatic = Authomatic(CONFIG, SECRET_KEY, report_errors=False)
-
-#OPENID_PROVIDERS = [
-#    {'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id'},
-#    {'name': 'MyOpenID', 'url': 'https://www.myopenid.com'}]
