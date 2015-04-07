@@ -36,6 +36,11 @@ This will create a database
 
 `python manage.py db upgrade`
 
+### Initialize ranks
+
+'python manage.py shell'
+'Rank.initilize_ranks(Rank)'
+
 ### Learn more
 
 `python manage.py db --help`

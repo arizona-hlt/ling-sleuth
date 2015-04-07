@@ -13,11 +13,13 @@ class User(db.Model):
     rank_id = db.Column(db.Integer, db.ForeignKey('ranks.id'))
 
 
-    def __init__(self, username, provider, email):
+    def __init__(self,username,provider,email):
         self.username = username
         self.provider = provider
         self.email = email
         self.registered_on = datetime.utcnow()
+        if self.rank is None:
+            self.rank = Rank.query.filter_by(default=True).first()
 
     def is_authenticated(self):
         return True
@@ -46,11 +48,11 @@ class Rank(db.Model):
     permissions = db.Column('permissions',db.Integer)
     users = db.relationship('User', backref='rank', lazy='dynamic')
 
-    # def __init__(self, rank):
-    #     self.rank = rank
+    def __init__(self, rank):
+        self.rank = rank
 
     @staticmethod
-    def update_ranks(self):
+    def initialize_ranks(self):
 
         self.user_ranks = {
             'Anonymous':
@@ -74,14 +76,12 @@ class Rank(db.Model):
         }
 
         for r in self.user_ranks:
-            print self.user_ranks[r], 'hi'
             # try:
             level = Rank.query.filter_by(rank=r).first()
             if level is None:
                 level = Rank(rank=r)
             level.permissions = self.user_ranks[r][0]
             level.default = self.user_ranks[r][1]
-            print 'blah'
             db.session.add(level)
         db.session.commit()
 
