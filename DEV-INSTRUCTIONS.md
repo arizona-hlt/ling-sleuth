@@ -38,8 +38,8 @@ This will create a database
 
 ### Initialize ranks
 
-'python manage.py shell'
-'Rank.initilize_ranks(Rank)'
+`python manage.py shell`
+`Rank.initilize_ranks(Rank)`
 
 ### Learn more
 

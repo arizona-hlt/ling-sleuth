@@ -11,14 +11,16 @@
 {% block page_content -%}
 
 
-<h1>{{current_user.username }}'s Profile</h1>
+<h1>{{ current_user.username }}'s Profile</h1>
 
 
 <dl>
     <dt>Username:</dt>
-    <dd>{{current_user.username}}</dd>
+    <dd>{{user.username}}</dd>
     <dt>Rank:</dt>
-    <dd>{{current_user.rank}}</dd>
+    <dd>{{user.rank}}</dd>
+    <dt>Level:</dt>
+    <dd>{{user.level}}</dd>
 	<dt>Next Rank:</dt>
 	<dd>a-poo-rentice</dd>
     <dt>Latest Skill:</dt>

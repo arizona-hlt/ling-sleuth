@@ -11,6 +11,7 @@ class User(db.Model):
     registered_on = db.Column('registered_on' , db.DateTime)
 
     rank_id = db.Column(db.Integer, db.ForeignKey('ranks.id'))
+    level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
 
 
     def __init__(self,username,provider,email):
@@ -20,6 +21,8 @@ class User(db.Model):
         self.registered_on = datetime.utcnow()
         if self.rank is None:
             self.rank = Rank.query.filter_by(default=True).first()
+        if self.level is None:
+            self.level = Level.query.filter_by(default=True).first()
 
     def is_authenticated(self):
         return True
@@ -41,16 +44,20 @@ class User(db.Model):
 
 
 class Rank(db.Model):
-    __tablename__ = 'ranks'
-    id = db.Column(db.Integer,primary_key=True)
+    __tablename__ = "ranks"
+    id = db.Column('id', db.Integer,primary_key=True)
     rank = db.Column('rank',db.String(20), index=True, unique=True)
     default = db.Column('default',db.Boolean, default=False, index=True)
     permissions = db.Column('permissions',db.Integer)
+
     users = db.relationship('User', backref='rank', lazy='dynamic')
+    
 
-    def __init__(self, rank):
+    def __init__(self, rank, permissions):
         self.rank = rank
+        self.permissions = permissions
 
+    #this should only be run once to populate the database with the desired ranks
     @staticmethod
     def initialize_ranks(self):
 
@@ -79,8 +86,8 @@ class Rank(db.Model):
             # try:
             level = Rank.query.filter_by(rank=r).first()
             if level is None:
-                level = Rank(rank=r)
-            level.permissions = self.user_ranks[r][0]
+                level = Rank(rank=r,permissions=self.user_ranks[r][0])
+            # level.permissions = self.user_ranks[r][0]
             level.default = self.user_ranks[r][1]
             db.session.add(level)
         db.session.commit()
@@ -89,9 +96,50 @@ class Rank(db.Model):
     def __repr__(self):
         return '<Rank %r>' % (self.rank)
 
-class Levels:
 
-    q=1
+class Level(db.Model):
+    __tablename__ = "levels"
+    id = db.Column('id', db.Integer,primary_key=True)
+    level = db.Column('level', db.String(20),index=True, unique=True)
+    default = db.Column('default',db.Boolean,default=False,index=True)
+    permissions = db.Column('permissions',db.Integer)
+
+    users = db.relationship('User',backref='level',lazy='dynamic')
+
+    def __init__(self,level,permissions):
+        self.level = level
+        self.permissions = permissions
+
+    #This should only be run once to populate the database with the desired levels
+    @staticmethod
+    def initialize_levels(self):
+
+        #0x011 is the maximum value here - 17, allowing for a total of 17 levels between ranks
+        #can be set to a lower hex
+        level_max = 0x011
+
+        self.level_name = 'Level-{0}'
+        
+
+        for l in range(0x000,level_max):#self.rank_levels:
+            l_name = self.level_name.format(str(l+0x001))
+            level = Level.query.filter_by(level=l_name).first()
+            if level is None:
+                level = Level(level=l_name,permissions=l)
+
+            if l == 0x000:
+                level.default = True
+            else:
+                level.default = False
+
+            db.session.add(level)
+        db.session.commit()
+
+
+    def __repr__(self):
+        return '<Level %r>' % (self.level)
+
+    
 
 
 class Permissions:
@@ -102,7 +150,7 @@ class Permissions:
     ASSISTANT_DETECTIVE = 0x011
     DETECTIVE = 0x021
     PERSONAL_INVESTIGATOR = 0x031
-    SLEUTH = 0x41
+    SLEUTH = 0x041
     SUPER_SLEUTH = 0x051
     WATSON = 0x061
     SHERLOCK = 0x071
@@ -116,7 +164,16 @@ class Permissions:
         
 
 
-class Skills:  #holds dict, where modules are keys, val=list the length of # of modules
+class Module(db.Model):  #holds dict, where modules are keys, val=list the length of # of modules
+    __tablename__ = 'modules'
+    id = db.Column(db.Integer,primary_key=True)
+    module = db.Column('module',db.String(64),index=True,unique=True)
+    # content = db.Column('content',db.Text,index=True,unique=True)
+
+    def __init__(self,module):
+        self.module = module
+
+
     modules = {
             'Syntax'        :   [-1]*3,
             'Phonology'     :   [-1]*3,

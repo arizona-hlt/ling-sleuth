@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} Modules {% endblock title %}
+
+{% block styles -%}
+{{ super() }}
+<link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
+{%- endblock styles %}
+
+{% block page_content %}
+
+<h1>Case Files</h1>
+
+<p>Here is your manilla envelope of all your cases.</p>
+
+<h2>Active Cases</h2>
+
+<li>The Unfortunate Tale of Herbert</li>
+
+<h2>Closed Cases</h2>
+
+<li>None</li>
+
+<h2>Pick up another case!</h2>
+
+<li>Lo Jazz strikes again!</li>
+
+
+
+{% endblock page_content %}

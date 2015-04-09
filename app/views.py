@@ -50,7 +50,8 @@ def login_with_provider(provider_name):
             app.logger.info("{0} is a logged in via {1}.".format(result.user.name, provider_name))
         # The rest happens inside the template.
         #result.user.data.x will return further user data
-        return render_template('login-test.html', result=result)
+        username = User.query.filter_by(username=result.user.name).first()
+        return render_template('login-test.html', result=result, user=username)
 
     # Don't forget to return the response.
     return response
@@ -87,8 +88,12 @@ def about():
 @app.route('/profile')
 @login_required
 def profile():
-     return render_template('profile.html',
-                           title='Profile')
+    user = User.query.filter_by(username=current_user.username).first()
+    if user is None:
+        abort(404)
+    return render_template('profile.html',
+                           title='Profile',
+                           user=user)
 
 @app.route('/cases')
 def cases():

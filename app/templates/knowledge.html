@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} Modules {% endblock title %}
+
+{% block styles -%}
+{{ super() }}
+<link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
+{%- endblock styles %}
+
+{% block page_content %}
+
+<h1>Skillz</h1>
+
+<p>Here's your Trophy room of all you've learned!</p>
+
+<h2>Current Skills:</h2>
+
+<li>None</li>
+
+<p>Diagnosis: Crack open a book!</p>
+
+
+
+
+{% endblock page_content %}
