@@ -100,10 +100,10 @@ def cases():
     return render_template('cases.html',
                            title='Cases')
 
-# @app.route('/learn/{0}.html'.format(User.query.filter_by(username=current_user.username).first().module))
-# def modules():
-#     return render_template('{0}.html'.format(User.query.filter_by(username=current_user.username).first().module),
-#                             title='Module')
+@app.route('/learn/<module>')
+def modules(module):
+    return render_template('{0}.html'.format(module),
+                            title='Modules')
 
 @app.route('/learn')
 def learn():

@@ -19,25 +19,30 @@
 {% if modules %}
 	{% for m in modules %}
 		{% if m < user_permissions %}
-			<li> <a href={{'url_for(m.module)'}}> {{ m.module }} </a></li>
+			<li> <a href={{"url_for('modules', module = m.module)"}}> {{ m.module }} </a></li>
 		{% else %}
 			<li> None </li>
 		{% endif %}
 	{% endfor %}
 {% endif %}
-	<!--li>Module 2</li>
-	<li>Module 3</li-->
+
+<h2> Active Modules </h2>
+
+{% if modules %}
+	{% for m in modules %}
+		{% if m == user_permissions %}
+			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
+		{% endif %}
+	{% endfor %}
+{% endif %}
+
+<h2> Locked Modules </h2>
 
 
-<h2> Unfinished Modules </h2>
-
-
-	<li> <a href={{'url_for((m.query.filter_by(permissions=user_permissions).first()).module)'}}> </li>
-	<!--li>Final Module</li-->
 {% if modules %}
 	{% for m in modules %}
 		{% if m > user_permissions %}
-			<li> <a href={{'url_for(m.module)'}}> {{ m.module }} </a></li>
+			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
 		{% endif %}
 	{% endfor %}
 {% endif %}
