@@ -51,7 +51,7 @@ class Rank(db.Model):
     permissions = db.Column('permissions',db.Integer)
 
     users = db.relationship('User', backref='rank', lazy='dynamic')
-    
+
 
     def __init__(self, rank, permissions):
         self.rank = rank
@@ -94,7 +94,7 @@ class Rank(db.Model):
 
 
     def __repr__(self):
-        return '<Rank %r>' % (self.rank)
+        return self.rank
 
 
 class Level(db.Model):
@@ -118,14 +118,13 @@ class Level(db.Model):
         #can be set to a lower hex
         level_max = 0x011
 
-        self.level_name = 'Level-{0}'
-        
+
 
         for l in range(0x000,level_max):#self.rank_levels:
-            l_name = self.level_name.format(str(l+0x001))
+            l_name = l+0x001
             level = Level.query.filter_by(level=l_name).first()
             if level is None:
-                level = Level(level=l_name,permissions=l)
+                level = Level(level=l_name, permissions=l)
 
             if l == 0x000:
                 level.default = True
@@ -137,9 +136,9 @@ class Level(db.Model):
 
 
     def __repr__(self):
-        return '<Level %r>' % (self.level)
+        return self.level
 
-    
+
 
 
 class Permissions:
@@ -161,7 +160,7 @@ class Permissions:
 
 
     # def assign_module_permissions():
-        
+
 
 
 class Module(db.Model):  #holds dict, where modules are keys, val=list the length of # of modules
@@ -204,19 +203,3 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
             return "Module not found."
         db.session.delete(mod_name)
         db.session.commit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
