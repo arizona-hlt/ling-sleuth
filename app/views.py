@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user , logout_user , current_user , login_required
 from app import app, db, login_manager
 from .forms import LoginForm, RegisterForm
-from .models import User
+from .models import User, Module
 from config import basedir
 from authomatic.adapters import WerkzeugAdapter
 from config import authomatic #used for oauth2 stuff
@@ -100,10 +100,21 @@ def cases():
     return render_template('cases.html',
                            title='Cases')
 
+# @app.route('/learn/{0}.html'.format(User.query.filter_by(username=current_user.username).first().module))
+# def modules():
+#     return render_template('{0}.html'.format(User.query.filter_by(username=current_user.username).first().module),
+#                             title='Module')
+
 @app.route('/learn')
 def learn():
+    user = User.query.filter_by(username=current_user.username).first()
+    user_permissions = user.rank.permissions + user.level.permissions
+    modules = Module.query.order_by(Module.permissions)
     return render_template('learn.html',
-                           title='Learn')
+                           title='Learn',
+                           user=user,
+                           user_permissions=user_permissions,
+                           modules=modules)
 
 @app.route('/knowledge')
 @login_required

@@ -168,15 +168,55 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
     __tablename__ = 'modules'
     id = db.Column(db.Integer,primary_key=True)
     module = db.Column('module',db.String(64),index=True,unique=True)
-    # content = db.Column('content',db.Text,index=True,unique=True)
+    permissions = db.Column('permissions',db.Integer)
+    description = db.Column('description',db.Text,index=True,unique=True)
 
     def __init__(self,module):
         self.module = module
 
+    # modules = {
+    #         'Syntax'        :   [-1]*3,
+    #         'Phonology'     :   [-1]*3,
+    #         'Morphology'    :   [-1]*3,
+    #         'Computational' :   [-1]*7
+    # }
 
-    modules = {
-            'Syntax'        :   [-1]*3,
-            'Phonology'     :   [-1]*3,
-            'Morphology'    :   [-1]*3,
-            'Computational' :   [-1]*7
-    }
+    @staticmethod
+    def add_module(module,rank,level,description):
+        mod_name = Module.query.filter_by(module=module).first()
+        if mod_name is None:
+            mod_name = Module(module=module)
+        rank = Rank.query.filter_by(rank=rank).first()
+        level = Level.query.filter_by(level=level).first()
+        print(rank.permissions,level.permissions)
+        # print(rank.query.filter('permissions'))
+        # rank_permissions = rank.permissions
+        # level_permissions = level.permissions
+        mod_name.permissions = int(rank.permissions) + int(level.permissions)
+        mod_name.description = description
+        db.session.add(mod_name)
+        db.session.commit()
+
+
+    def remove_module(self,module):
+        mod_name = Module.query.filter_by(module=module).first()
+        if mod_name is None:
+            return "Module not found."
+        db.session.delete(mod_name)
+        db.session.commit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

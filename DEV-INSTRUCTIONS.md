@@ -36,10 +36,19 @@ This will create a database
 
 `python manage.py db upgrade`
 
-### Initialize ranks
+### Initialize ranks and levels
 
 `python manage.py shell`
-`Rank.initilize_ranks(Rank)`
+
+`Rank.initialize_ranks(Rank)`
+
+`Level.initialize_levels(Level)`
+
+### Add modules to database
+
+`python manage.py shell`
+
+`Module.add_module([name_of_module],[rank_at_which_accessible],[level_at_which_accessible],[description])
 
 ### Learn more
 
