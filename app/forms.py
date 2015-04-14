@@ -9,7 +9,6 @@ class LoginForm(Form):
     password = PasswordField('Password', id='password', validators=[Required()])
     submit = SubmitField('Log in', id='login')
 
-
 class RegisterForm(Form):
     #name = StringField('Name', id='name')
     username = StringField('Username', id='username', validators=[Required("Uh-oh! You forgot to choose a username.")])
