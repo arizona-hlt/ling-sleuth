@@ -27,7 +27,7 @@ def load_user(id):
 @app.route('/index')
 def index():
     return render_template('index.html',
-                           title='Welcome')
+                           title='LING SLEUTH')
 
 @app.route('/login/<provider_name>/', methods=['GET', 'POST'])
 def login_with_provider(provider_name):
