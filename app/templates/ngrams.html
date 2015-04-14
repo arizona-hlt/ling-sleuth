@@ -1,0 +1,53 @@
+{% extends "modules.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} Modules {% endblock title %}
+
+{% block module_intro %}
+<h1> Module 1: N-grams! </h1>
+
+<h2> What's an N-gram? </h2>
+
+<p>[Enter Content Here]</p>
+
+<h2> How are N-grams used? </h2>
+
+<p> Blah Blah Blah </p>
+
+<h2> Another section </h2>
+
+<p> More text </p>
+{% endblock module_intro %}
+
+{% block demonstration %}
+<h2> Demonstration </h2>
+Character bigrams for the word "noodle":
+<div id='collapse-me', class='accordion-body collapse'>
+<br>
+<samp>no oo od dl le</samp>
+</div>
+
+<br><button type="button" class="btn-info", id="collapser">peek <i class="fa fa-arrow-up"></i></button>
+{% endblock demonstration %}
+
+{% block quiz %}
+<div class="alert-message block-message error">
+  <a class="close" href="#">×</a>
+  We need a smart way to handle quiz scoring!  Where should the redirect go?
+</div>
+{{super()}}
+{% endblock quiz %}
+
+{% block demo_scripts %}
+<script>
+// Handle button
+$('#collapser').on('click', function(e) {
+    e.preventDefault();
+    $('#collapse-me').collapse('toggle');
+});
+// Handle clicks within div
+$('#collapse-me').on('click', function(e) {
+  $(this).collapse('toggle');
+});
+</script>
+{% endblock demo_scripts %}
