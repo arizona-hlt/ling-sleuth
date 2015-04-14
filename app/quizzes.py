@@ -18,4 +18,4 @@ class Ngrams(Form):
     submit = SubmitField('Did I pass?', id='grade')
 
 
-quiz_dict = {'ngrams':Ngrams}
+quiz_dict = {'n-grams':Ngrams}

@@ -2,17 +2,14 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block module_intro %}
-<h2> What's an N-gram? </h2>
+<h2> What are {{title}}? </h2>
 
-<p>[Enter Content Here]</p>
+<p></p>
 
-<h2> How are N-grams used? </h2>
+<h2> How are {{title}} used? </h2>
 
-<p> Blah Blah Blah </p>
+<p></p>
 
-<h2> Another section </h2>
-
-<p> More text </p>
 {% endblock module_intro %}
 
 {% block demonstration %}
@@ -25,14 +22,6 @@ Character bigrams for the word "noodle":
 
 <br><button type="button" class="btn-info", id="collapser">peek <i class="fa fa-arrow-up"></i></button>
 {% endblock demonstration %}
-
-{% block quiz %}
-<div class="alert-message block-message error">
-  <a class="close" href="#">×</a>
-  We need a smart way to handle quiz scoring!  Where should the redirect go?
-</div>
-{{super()}}
-{% endblock quiz %}
 
 {% block demo_scripts %}
 <script>
