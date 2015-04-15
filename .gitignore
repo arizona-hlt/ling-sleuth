@@ -44,9 +44,15 @@ develop-eggs
 lib
 lib64
 
-#texpad
+# texpad
 .tpbuild
 
-#Flask
+# Flask
 secret.py
 app.db
+
+# Ignore virtualenvironment contents
+venv
+
+# keep any .gitkeep
+!/*.gitkeep
