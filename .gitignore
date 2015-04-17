@@ -52,3 +52,5 @@ lib64
 secret.py
 app.db
 migrations/
+venv/
+

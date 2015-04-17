@@ -178,7 +178,7 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
     #this is the "skill" obtained by completing the module.  This would go on the skills page.
     skill = db.Column('skill',db.Text,index=True,unique=True)
     #would this be a many-to-one?
-    case = db.Column()
+    case = db.relationship('Case',backref='module',lazy='dynamic')
 
 
     def __init__(self,module):
@@ -193,19 +193,7 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
 
     @staticmethod
     def add_module(module,rank,level,description):
-        mod_name = Module.query.filter_by(module=module).first()
-        if mod_name is None:
-            mod_name = Module(module=module)
-        rank = Rank.query.filter_by(rank=rank).first()
-        level = Level.query.filter_by(level=level).first()
-        print(rank.permissions,level.permissions)
-        # print(rank.query.filter('permissions'))
-        # rank_permissions = rank.permissions
-        # level_permissions = level.permissions
-        mod_name.permissions = int(rank.permissions) + int(level.permissions)
-        mod_name.description = description
-        db.session.add(mod_name)
-        db.session.commit()
+    #SOMEHOW THIS GOT DELETED        
 
 
     def remove_module(self,module):
@@ -223,6 +211,30 @@ class Quiz(db.Model):
     permissions = db.Column('permissions',db.Integer)
     description = db.Column('description',db.Text)
     passed = db.Column('passed',db.Boolean)
+    
+    #refs
+    skill_id = db.Column('skill',db.String(50),unique=True,index=True)
+    question_id = db.Column('question',db.Integer,db.ForeignKey('questions.id'))
+
+    def __init__(self,quiz,permissions,description):
+        self.quiz = quiz
+        self.permissions = permissions
+        self.description = description
+        self.passed = False
+
+
+    def add_quiz(line):
+        quiz_name = Quiz.query.filter_by(quiz=line[0]).first()
+        #line[0] is the quiz name
+        if quiz_name is None:
+            quiz_name = Quiz(quiz=line[0],permissions=line[1],description=line[2])
+        quiz_name.skill_id = Skill.query.filter_by(skill=line[3])
+        db.session.add(quiz_name)
+        db.session.commit()
+
+    def add_question(question):
+        question_id = Question_Library.query.filter_by(question=question).first()
+
 
 
 class Skill(db.Model):
@@ -232,6 +244,71 @@ class Skill(db.Model):
     #not sure if this should be associated with passing a quiz/module or not.
     quiz_id = db.relationship('Quiz',backref='skill',lazy='dynamic')
     user_id = db.relationship('User',backref='skill',lazy='dynamic')
+
+    def add_skill(skill,quiz):
+        skill_set = Skill.query.filter_by(skill=skill).first()
+        if skill_set is None:
+            skill_set = Skill(skill=skill)
+        skill_set.quiz_id = Quiz.query.filter_by(quiz=quiz)
+        db.session.add(skill_set)
+        db.session.commit()
+
+
+
+class Question_Library(db.Model):
+    __tablename__ = 'questions'
+    question = db.Column('question',db.Text,unique=True,index=True)
+    points = db.Column('points',db.Integer)
+    #e.g. short answer, multiple choice, T/F, etc.
+    q_type = db.Column('q_type',db.String(20))
+
+    quiz_id = db.relationship('Quiz',backref='question',lazy='dynamic')
+    #answers
+    incorrect_answer_id = db.Column('incorr_answer',db.Integer, db.ForeignKey('answers.id'))
+    correct_answer_id = db.Column('corr_answer',db.Integer, db.ForeignKey('answers.id'))
+
+    def __init__(self,question,points,q_type):
+        self.question = question
+        self.points = points
+        self.q_type = q_type
+
+
+    def add_question(line):
+        question_text = Question_Library.query.filter_by(question=line[2])
+        if question_text is None:
+            question_text = Question_Library(question=line[1],points=line[2],q_type=line[3])
+        
+        #adding answers
+        for item in line[4:len(line)]:
+            Answer_Library.add_answer(item)
+        question_text.correct_answer_id = Answer_Library.query.filter_by(answer=line[4])
+        for item in line[5:len(line)]:
+            question_text.incorrect_answer_id = Answer_Library.query.filter_by(answer=item)
+
+        #linking question to quiz
+        quiz = Quiz.query.filter_by(line[0])
+        quiz.add_question(line[1])
+        db.session.add(question_text)
+        db.session.commit()
+
+
+
+class Answer_Library(db.Model):
+    __tablename__ = 'answers'
+    answer = db.Column('answer',db.Text,unique=True,index=True)
+
+    #backref
+    question = db.relationship('Question_Library',backref='answer',lazy='dynamic')
+
+    def __init__(self,answer):
+        self.answer = answer
+        
+    def add_answer(answer):
+        answer_text = Answer_Library.query.filter_by(answer=answer).first()
+        if answer_text is None:
+            answer_text = Answer_Library(answer=answer)
+        db.session.add(answer_text)
+        db.session.commit()
 
 
 class Case(db.Model):
@@ -253,11 +330,15 @@ class Case(db.Model):
 
 
     def add_case(casefile_path):
-        casefile = open(casefile_path,'r').readlines()
+        casefile = open('../cases/casefile_path','r').readlines()
+
+        case = Case.query.filter_by(case_name=casefile[0]).first()
+        if case is None:
+            case = Case(case_name=casefile[0],accepted=False)
 
         FIELD = None
 
-        for line in casefile:
+        for line in casefile[1:len(casefile):
             line = line.split('\t')
 
             if line[0] == '#':
@@ -265,14 +346,19 @@ class Case(db.Model):
                 continue
 
             if FIELD == 'MODULE':
-                #pass 'module, rank, level, description, case' to this function
-                Module.add_module(line[0],line[1],line[2],line[3],line[4])
+                #pass 'module, rank, level, description' to this function
+                Module.add_module(line[0],line[1],line[2],line[3])
+                case.module_id = Module.query.filter_by(module=line[0]).first()
 
             if FIELD == 'SKILL':
-                do that
+                Skill.add_skill(line)
+                case.skill_id = Skill.query.filter_by(skill=line)
 
             if FIELD == 'QUIZ':
-                do lots
+                Quiz.add_quiz(line)
+
+            if FIELD == 'QUESTION':
+                Question_Library.add_question(line)
 
             else:
                 continue
