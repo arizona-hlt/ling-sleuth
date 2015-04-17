@@ -13,6 +13,10 @@ class User(db.Model):
     rank_id = db.Column(db.Integer, db.ForeignKey('ranks.id'))
     level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
 
+    #Unsure if these are going to work.  Need a one-to-many (maybe many-to-many) relationship
+    skill_id = db.Column(db.Integer,db.ForeignKey('skills.id'))
+    case_id = db.Column(db.Integer,db.ForeignKey('cases.id'))
+
 
     def __init__(self,username,provider,email):
         self.username = username
@@ -40,7 +44,7 @@ class User(db.Model):
         return 'http://www.gravatar.com/avatar/%s?d=mm&s=%d' % (md5(self.email.encode('utf-8')).hexdigest(), size)
 
     def __repr__(self):
-        return '<User %r>' % (self.username)
+        return self.username
 
 
 class Rank(db.Model):
@@ -169,6 +173,13 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
     module = db.Column('module',db.String(64),index=True,unique=True)
     permissions = db.Column('permissions',db.Integer)
     description = db.Column('description',db.Text,index=True,unique=True)
+    #this is how many "permission points" this module is worth???
+    increase = db.Column('increase',db.Integer)
+    #this is the "skill" obtained by completing the module.  This would go on the skills page.
+    skill = db.Column('skill',db.Text,index=True,unique=True)
+    #would this be a many-to-one?
+    case = db.Column()
+
 
     def __init__(self,module):
         self.module = module
@@ -203,3 +214,73 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
             return "Module not found."
         db.session.delete(mod_name)
         db.session.commit()
+
+
+class Quiz(db.Model):
+    __tablename__ = 'quizzes'
+    id = db.Column(db.Integer,primary_key=True)
+    quiz = db.Column('quiz',db.String(50),unique=True,index=True)
+    permissions = db.Column('permissions',db.Integer)
+    description = db.Column('description',db.Text)
+    passed = db.Column('passed',db.Boolean)
+
+
+class Skill(db.Model):
+    __tablename__ = 'skills'
+    id = db.Column(db.Integer,primary_key=True)
+    skill = db.Column('skill',db.String(50),unique=True,index=True)
+    #not sure if this should be associated with passing a quiz/module or not.
+    quiz_id = db.relationship('Quiz',backref='skill',lazy='dynamic')
+    user_id = db.relationship('User',backref='skill',lazy='dynamic')
+
+
+class Case(db.Model):
+    __tablename__ = 'cases'
+    id = db.Column(db.Integer,primary_key=True)
+    case_name = db.Column('case',db.String(100),unique=True,index=True)
+    accepted = db.Column('accepted',db.Boolean)
+
+    #one to many relationships - unsure how to do, one of below two ways? for each of the below fields
+    module_id = db.Column(db.Integer,db.ForeignKey('modules.id'))
+    #modules = db.relationship('Module',backref='case')
+
+    quiz_id = db.Column(db.Integer,db.ForeignKey('quiz.id'))
+    skill_id = db.Column(db.Integer,db.ForeignKey('skill.id'))
+
+
+    def __init__(self,case_name):
+        self.case_name = case_name
+
+
+    def add_case(casefile_path):
+        casefile = open(casefile_path,'r').readlines()
+
+        FIELD = None
+
+        for line in casefile:
+            line = line.split('\t')
+
+            if line[0] == '#':
+                FIELD = line[1]
+                continue
+
+            if FIELD == 'MODULE':
+                #pass 'module, rank, level, description, case' to this function
+                Module.add_module(line[0],line[1],line[2],line[3],line[4])
+
+            if FIELD == 'SKILL':
+                do that
+
+            if FIELD == 'QUIZ':
+                do lots
+
+            else:
+                continue
+
+
+
+
+
+
+
+
