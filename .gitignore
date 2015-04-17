@@ -1,8 +1,7 @@
 # Python
 *.pyc
 *.pyo
-
-*~
+*.Python
 
 # Intellij
 .idea/
@@ -32,6 +31,8 @@ main.brf
 # Packages
 *.egg
 *.egg-info
+*.json
+python2.7
 dist
 build
 eggs
@@ -50,3 +51,4 @@ lib64
 #Flask
 secret.py
 app.db
+migrations/
