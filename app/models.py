@@ -10,12 +10,12 @@ class User(db.Model):
     email = db.Column('email',db.String(50), unique=True , index=True)
     registered_on = db.Column('registered_on' , db.DateTime)
 
-    rank_id = db.Column(db.Integer, db.ForeignKey('ranks.id'))
-    level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
+    rank_id = db.Column(db.Integer, db.ForeignKey('ranks.id'),nullable=True)
+    level_id = db.Column(db.Integer, db.ForeignKey('levels.id'),nullable=True)
 
     #Unsure if these are going to work.  Need a one-to-many (maybe many-to-many) relationship
-    skill_id = db.Column(db.Integer,db.ForeignKey('skills.id'))
-    case_id = db.Column(db.Integer,db.ForeignKey('cases.id'))
+    skill_id = db.Column(db.Integer,db.ForeignKey('skills.id'),nullable=True)
+    # case_id = db.Column(db.Integer,db.ForeignKey('cases.id'))
 
 
     def __init__(self,username,provider,email):
@@ -110,9 +110,9 @@ class Level(db.Model):
 
     users = db.relationship('User',backref='level',lazy='dynamic')
 
-    def __init__(self,level,permissions):
+    def __init__(self,level):
         self.level = level
-        self.permissions = permissions
+        # self.permissions = permissions
 
     #This should only be run once to populate the database with the desired levels
     @staticmethod
@@ -125,16 +125,17 @@ class Level(db.Model):
 
 
         for l in range(0x000,level_max):#self.rank_levels:
-            l_name = l+0x001
+            l_name = 'Level-'+str(l+0x001)
             level = Level.query.filter_by(level=l_name).first()
             if level is None:
-                level = Level(level=l_name, permissions=l)
+                level = Level(level=l_name)
 
+            level.permissions = l
             if l == 0x000:
                 level.default = True
             else:
                 level.default = False
-
+            print(level)
             db.session.add(level)
         db.session.commit()
 
@@ -178,7 +179,8 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
     #this is the "skill" obtained by completing the module.  This would go on the skills page.
     skill = db.Column('skill',db.Text,index=True,unique=True)
     #would this be a many-to-one?
-    case = db.relationship('Case',backref='module',lazy='dynamic')
+    # case = db.relationship('Case',backref='module',lazy='dynamic')
+    quizzes = db.relationship('Quiz',backref='module',lazy='dynamic')
 
 
     def __init__(self,module):
@@ -193,10 +195,23 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
 
     @staticmethod
     def add_module(module,rank,level,description):
-    #SOMEHOW THIS GOT DELETED        
+        mod_name = Module.query.filter_by(module=module).first()
+        if mod_name is None:
+            mod_name = Module(module=module)
+        rank = Rank.query.filter_by(rank=rank).first()
+        level = Level.query.filter_by(level=level).first()
+        # print(rank,level)
+        print(rank.permissions,level.permissions)
+        # print(rank.query.filter('permissions'))
+        # rank_permissions = rank.permissions
+        # level_permissions = level.permissions
+        mod_name.permissions = int(rank.permissions) + int(level.permissions)
+        mod_name.description = description
+        db.session.add(mod_name)
+        db.session.commit()      
 
 
-    def remove_module(self,module):
+    def remove_module(module):
         mod_name = Module.query.filter_by(module=module).first()
         if mod_name is None:
             return "Module not found."
@@ -208,18 +223,26 @@ class Quiz(db.Model):
     __tablename__ = 'quizzes'
     id = db.Column(db.Integer,primary_key=True)
     quiz = db.Column('quiz',db.String(50),unique=True,index=True)
-    permissions = db.Column('permissions',db.Integer)
+    # permissions = db.Column('permissions',db.Integer)
     description = db.Column('description',db.Text)
+    #this should be a percentage value specifying the percentage of correct questions to pass the quiz
+    passing_threshold = db.Column('passing_threshold',db.Float)
     passed = db.Column('passed',db.Boolean)
+    xp = db.Column('xp',db.Integer)
     
     #refs
-    skill_id = db.Column('skill',db.String(50),unique=True,index=True)
-    question_id = db.Column('question',db.Integer,db.ForeignKey('questions.id'))
+    # modules = db.relationship('Module',backref='quiz',lazy='dynamic')
+    skills = db.relationship('Skill',backref='quiz',lazy='select',uselist=False)
+    questions = db.relationship('Question_Library',backref='quiz',lazy='dynamic')
+    # skill_id = db.Column('skill',db.String(50),unique=True,index=True)
+    module_id = db.Column(db.Integer,db.ForeignKey('modules.id'),nullable=True)
+    # question_id = db.Column(db.Integer,db.ForeignKey('questions.id'))
 
-    def __init__(self,quiz,permissions,description):
+    def __init__(self,quiz,description,threshold):
         self.quiz = quiz
-        self.permissions = permissions
+        # self.permissions = permissions
         self.description = description
+        self.passing_threshold = threshold
         self.passed = False
 
 
@@ -227,7 +250,9 @@ class Quiz(db.Model):
         quiz_name = Quiz.query.filter_by(quiz=line[0]).first()
         #line[0] is the quiz name
         if quiz_name is None:
-            quiz_name = Quiz(quiz=line[0],permissions=line[1],description=line[2])
+            quiz_name = Quiz(quiz=line[0])
+        quiz_name.permissions = line[1]
+        quiz_name.description = line[2]
         quiz_name.skill_id = Skill.query.filter_by(skill=line[3])
         db.session.add(quiz_name)
         db.session.commit()
@@ -240,9 +265,11 @@ class Quiz(db.Model):
 class Skill(db.Model):
     __tablename__ = 'skills'
     id = db.Column(db.Integer,primary_key=True)
-    skill = db.Column('skill',db.String(50),unique=True,index=True)
+    skill = db.Column('skill',db.String(100),unique=True,index=True)
+    feature = db.Column('feature',db.String(50),unique=True,index=True)
     #not sure if this should be associated with passing a quiz/module or not.
-    quiz_id = db.relationship('Quiz',backref='skill',lazy='dynamic')
+    #ref
+    quiz_id = db.Column(db.Integer,db.ForeignKey('quizzes.id'),nullable=True)
     user_id = db.relationship('User',backref='skill',lazy='dynamic')
 
     def add_skill(skill,quiz):
@@ -254,18 +281,27 @@ class Skill(db.Model):
         db.session.commit()
 
 
+#Currently UNDER CONSTRUCTION
+class Feature(db.Model):
+    __tablename__ = 'features'
+    id = db.Column(db.Integer,primary_key=True)
+
+
 
 class Question_Library(db.Model):
     __tablename__ = 'questions'
+    id = db.Column(db.Integer, primary_key=True)
     question = db.Column('question',db.Text,unique=True,index=True)
     points = db.Column('points',db.Integer)
     #e.g. short answer, multiple choice, T/F, etc.
     q_type = db.Column('q_type',db.String(20))
 
-    quiz_id = db.relationship('Quiz',backref='question',lazy='dynamic')
+    # quiz_id = db.relationship('Quiz',backref='question',lazy='dynamic')
+    quiz_id = db.Column(db.Integer,db.ForeignKey('quizzes.id'),nullable=True)
     #answers
-    incorrect_answer_id = db.Column('incorr_answer',db.Integer, db.ForeignKey('answers.id'))
-    correct_answer_id = db.Column('corr_answer',db.Integer, db.ForeignKey('answers.id'))
+    answers = db.relationship('Answer_Library',backref='question',lazy='dynamic')
+    # incorrect_answer_id = db.Column('incorr_answer',db.Integer, db.ForeignKey('answers.id'))
+    # correct_answer_id = db.Column('corr_answer',db.Integer, db.ForeignKey('answers.id'))
 
     def __init__(self,question,points,q_type):
         self.question = question
@@ -295,75 +331,83 @@ class Question_Library(db.Model):
 
 class Answer_Library(db.Model):
     __tablename__ = 'answers'
+    id = db.Column(db.Integer, primary_key=True)
     answer = db.Column('answer',db.Text,unique=True,index=True)
+    truth_value = db.Column('truth_value',db.Boolean)
+
+    question_id = db.Column(db.Integer,db.ForeignKey('questions.id'),nullable=True)
 
     #backref
-    question = db.relationship('Question_Library',backref='answer',lazy='dynamic')
+    # question = db.relationship('Question_Library',backref='answer',lazy='dynamic')
 
     def __init__(self,answer):
         self.answer = answer
         
-    def add_answer(answer):
+    def add_answer(answer,truth_value):
         answer_text = Answer_Library.query.filter_by(answer=answer).first()
         if answer_text is None:
             answer_text = Answer_Library(answer=answer)
+        answer_text.truth_value = truth_value
         db.session.add(answer_text)
         db.session.commit()
 
-
+#Currently UNDER CONSTRUCTION
 class Case(db.Model):
     __tablename__ = 'cases'
     id = db.Column(db.Integer,primary_key=True)
-    case_name = db.Column('case',db.String(100),unique=True,index=True)
-    accepted = db.Column('accepted',db.Boolean)
+#     case_name = db.Column('case',db.String(100),unique=True,index=True)
+#     accepted = db.Column('accepted',db.Boolean)
 
-    #one to many relationships - unsure how to do, one of below two ways? for each of the below fields
-    module_id = db.Column(db.Integer,db.ForeignKey('modules.id'))
-    #modules = db.relationship('Module',backref='case')
+#     #one to many relationships - unsure how to do, one of below two ways? for each of the below fields
+#     module_id = db.Column(db.Integer,db.ForeignKey('modules.id'))
+#     #modules = db.relationship('Module',backref='case')
 
-    quiz_id = db.Column(db.Integer,db.ForeignKey('quiz.id'))
-    skill_id = db.Column(db.Integer,db.ForeignKey('skill.id'))
-
-
-    def __init__(self,case_name):
-        self.case_name = case_name
+#     quiz_id = db.Column(db.Integer,db.ForeignKey('quiz.id'))
+#     skill_id = db.Column(db.Integer,db.ForeignKey('skill.id'))
 
 
-    def add_case(casefile_path):
-        casefile = open('../cases/casefile_path','r').readlines()
-
-        case = Case.query.filter_by(case_name=casefile[0]).first()
-        if case is None:
-            case = Case(case_name=casefile[0],accepted=False)
-
-        FIELD = None
-
-        for line in casefile[1:len(casefile):
-            line = line.split('\t')
-
-            if line[0] == '#':
-                FIELD = line[1]
-                continue
-
-            if FIELD == 'MODULE':
-                #pass 'module, rank, level, description' to this function
-                Module.add_module(line[0],line[1],line[2],line[3])
-                case.module_id = Module.query.filter_by(module=line[0]).first()
-
-            if FIELD == 'SKILL':
-                Skill.add_skill(line)
-                case.skill_id = Skill.query.filter_by(skill=line)
-
-            if FIELD == 'QUIZ':
-                Quiz.add_quiz(line)
-
-            if FIELD == 'QUESTION':
-                Question_Library.add_question(line)
-
-            else:
-                continue
+#     def __init__(self,case_name):
+#         self.case_name = case_name
 
 
+#     def add_case(casefile_path):
+#         casefile = open('../cases/casefile_path','r').readlines()
+
+#         case = Case.query.filter_by(case_name=casefile[0]).first()
+#         if case is None:
+#             case = Case(case_name=casefile[0],accepted=False)
+
+#         FIELD = None
+
+#         for line in casefile[1:len(casefile)]:
+#             line = line.split('\t')
+
+#             if line[0] == '#':
+#                 FIELD = line[1]
+#                 continue
+
+#             if FIELD == 'MODULE':
+#                 #pass 'module, rank, level, description' to this function
+#                 Module.add_module(line[0],line[1],line[2],line[3])
+#                 case.module_id = Module.query.filter_by(module=line[0]).first()
+
+#             if FIELD == 'SKILL':
+#                 Skill.add_skill(line)
+#                 case.skill_id = Skill.query.filter_by(skill=line)
+
+#             if FIELD == 'QUIZ':
+#                 Quiz.add_quiz(line)
+
+#             if FIELD == 'QUESTION':
+#                 Question_Library.add_question(line)
+
+#             else:
+#                 continue
+
+#Currently UNDER CONSTRUCTION
+class Skill_Track(db.Model):
+    __tablename__ = 'skill_tracks'
+    id = db.Column(db.Integer,primary_key=True)
 
 
 

@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user , logout_user , current_user , login_required
 from app import app, db, login_manager
 from .forms import LoginForm, RegisterForm
+from .quizzes import *
 from .models import User, Module
 from config import basedir
 from authomatic.adapters import WerkzeugAdapter
@@ -26,7 +27,7 @@ def load_user(id):
 @app.route('/index')
 def index():
     return render_template('index.html',
-                           title='Welcome')
+                           title='LING SLEUTH')
 
 @app.route('/login/<provider_name>/', methods=['GET', 'POST'])
 def login_with_provider(provider_name):
@@ -91,19 +92,25 @@ def profile():
     user = User.query.filter_by(username=current_user.username).first()
     if user is None:
         abort(404)
+    # TODO: Add skills and diagnosis here...
     return render_template('profile.html',
-                           title='Profile',
-                           user=user)
+                           title='Profile')
 
 @app.route('/cases')
 def cases():
     return render_template('cases.html',
                            title='Cases')
 
-@app.route('/learn/<module>')
+@app.route('/learn/<module>', methods=['GET', 'POST'])
 def modules(module):
+    quiz = quiz_dict[module]
+    quiz = quiz()
+    if request.method == 'POST' and quiz.validate():
+        flash('Nice work!')
+        redirect(url_for('index'))
     return render_template('{0}.html'.format(module),
-                            title='Modules')
+                            title=module.title(),
+                            form=quiz)
 
 @app.route('/learn')
 def learn():
