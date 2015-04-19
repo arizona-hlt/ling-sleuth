@@ -20,11 +20,12 @@
 	{% for m in modules %}
 		{% if m.permissions < user_permissions %}
 			<li> <a href={{"url_for('modules', module = m.module)"}}> {{ m.module }} </a></li>
-		{% else %}
-			<li> None </li>
+		<!-- % else %} 
+			<li> None </li> -->
 		{% endif %}
 	{% endfor %}
 {% endif %}
+
 
 <h2> Active Modules </h2>
 
@@ -43,8 +44,8 @@
 	{% for m in modules %}
 		{% if m.permissions > user_permissions %}
 			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
-		{% else %}
-			<li> None! </li>
+		<!-- % else %}
+			<li> None </li> -->
 		{% endif %}
 	{% endfor %}
 {% endif %}

@@ -1,0 +1,38 @@
+{% extends "modules.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block module_intro %}
+<h2> What are {{title}}? </h2>
+
+<p></p>
+
+<h2> How are {{title}} used? </h2>
+
+<p></p>
+
+{% endblock module_intro %}
+
+{% block demonstration %}
+<h2> Demonstration </h2>
+Part of Speech for the word "noodle":
+<div id='collapse-me', class='accordion-body collapse'>
+<br>
+<samp>Noun</samp>
+</div>
+
+<br><button type="button" class="btn-info", id="collapser">peek <i class="fa fa-arrow-up"></i></button>
+{% endblock demonstration %}
+
+{% block demo_scripts %}
+<script>
+// Handle button
+$('#collapser').on('click', function(e) {
+    e.preventDefault();
+    $('#collapse-me').collapse('toggle');
+});
+// Handle clicks within div
+$('#collapse-me').on('click', function(e) {
+  $(this).collapse('toggle');
+});
+</script>
+{% endblock demo_scripts %}

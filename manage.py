@@ -2,19 +2,25 @@
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 from app import app, db
-from app.models import User, Rank, Level, Module
+from app.models import User, UserRank, Level, Module, Quiz, QuestionLibrary, AnswerLibrary
 
 migrate = Migrate(app, db)
 
 manager = Manager(app)
+
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Rank=Rank, Level=Level, Module=Module)
+    return dict(app=app, db=db, User=User, UserRank=UserRank, Level=Level, Module=Module, Quiz=Quiz, QuestionLibrary=QuestionLibrary, AnswerLibrary=AnswerLibrary)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
+def reboot():
+	UserRank.initialize_ranks(UserRank)
+	Level.initialize_levels(Level)
+	Module.csv_upload()
+manager.add_command('reboot', reboot())
 
+# if __name__ == '__main__':
+#     manager.run()
 
-if __name__ == '__main__':
-    manager.run()
 
 
 """

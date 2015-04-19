@@ -1,3 +1,4 @@
+import os
 from hashlib import md5
 from app import db
 from datetime import datetime
@@ -10,7 +11,7 @@ class User(db.Model):
     email = db.Column('email',db.String(50), unique=True , index=True)
     registered_on = db.Column('registered_on' , db.DateTime)
 
-    rank_id = db.Column(db.Integer, db.ForeignKey('ranks.id'),nullable=True)
+    user_rank_id = db.Column(db.Integer, db.ForeignKey('user_ranks.id'),nullable=True)
     level_id = db.Column(db.Integer, db.ForeignKey('levels.id'),nullable=True)
 
     #Unsure if these are going to work.  Need a one-to-many (maybe many-to-many) relationship
@@ -18,13 +19,13 @@ class User(db.Model):
     # case_id = db.Column(db.Integer,db.ForeignKey('cases.id'))
 
 
-    def __init__(self,username,provider,email):
+    def __init__(self,username,provider=None,email=None):
         self.username = username
         self.provider = provider
         self.email = email
         self.registered_on = datetime.utcnow()
-        if self.rank is None:
-            self.rank = Rank.query.filter_by(default=True).first()
+        if self.user_rank is None:
+            self.user_rank = UserRank.query.filter_by(default=True).first()
         if self.level is None:
             self.level = Level.query.filter_by(default=True).first()
 
@@ -35,7 +36,16 @@ class User(db.Model):
         return True
 
     def is_anonymous(self):
-        return False
+        try:
+            self.username
+            return False
+        except:
+            return True
+
+    def set_anonymous(self):
+        # self.username = 'Guest'
+        self.user_rank = UserRank.query.filter_by(user_rank='Anonymous').first()
+        self.level = Level.query.filter_by(default=True).first()
 
     def get_id(self):
         return unicode(self.id)
@@ -47,25 +57,25 @@ class User(db.Model):
         return self.username
 
 
-class Rank(db.Model):
-    __tablename__ = "ranks"
+class UserRank(db.Model):
+    __tablename__ = "user_ranks"
     id = db.Column('id', db.Integer,primary_key=True)
-    rank = db.Column('rank',db.String(20), index=True, unique=True)
+    user_rank = db.Column('user_rank',db.String(20), index=True, unique=True)
     default = db.Column('default',db.Boolean, default=False, index=True)
     permissions = db.Column('permissions',db.Integer)
 
-    users = db.relationship('User', backref='rank', lazy='dynamic')
+    users = db.relationship('User', backref='user_rank', lazy='dynamic')
 
 
-    def __init__(self, rank, permissions):
-        self.rank = rank
-        self.permissions = permissions
+    def __init__(self, user_rank):
+        self.user_rank = user_rank
+        # self.permissions = permissions
 
-    #this should only be run once to populate the database with the desired ranks
+    #this should only be run once to populate the database with the desired user_ranks
     @staticmethod
     def initialize_ranks(self):
 
-        self.user_ranks = {
+        self.user_rank_list = {
             'Anonymous':
                 (Permissions.ANONYMOUS,False),
             'Gumshoe':
@@ -86,19 +96,19 @@ class Rank(db.Model):
                 (Permissions.SHERLOCK,False)
         }
 
-        for r in self.user_ranks:
+        for r in self.user_rank_list:
             # try:
-            level = Rank.query.filter_by(rank=r).first()
+            level = UserRank.query.filter_by(user_rank=r).first()
             if level is None:
-                level = Rank(rank=r,permissions=self.user_ranks[r][0])
-            # level.permissions = self.user_ranks[r][0]
-            level.default = self.user_ranks[r][1]
+                level = UserRank(user_rank=r)
+            level.permissions = self.user_rank_list[r][0]
+            level.default = self.user_rank_list[r][1]
             db.session.add(level)
         db.session.commit()
 
 
     def __repr__(self):
-        return self.rank
+        return self.user_rank
 
 
 class Level(db.Model):
@@ -118,7 +128,7 @@ class Level(db.Model):
     @staticmethod
     def initialize_levels(self):
 
-        #0x011 is the maximum value here - 17, allowing for a total of 17 levels between ranks
+        #0x011 is the maximum value here - 17, allowing for a total of 17 levels between user_ranks
         #can be set to a lower hex
         level_max = 0x011
 
@@ -164,7 +174,6 @@ class Permissions:
     ADMINISTRATOR = 0x0f1
 
 
-    # def assign_module_permissions():
 
 
 
@@ -172,45 +181,72 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
     __tablename__ = 'modules'
     id = db.Column(db.Integer,primary_key=True)
     module = db.Column('module',db.String(64),index=True,unique=True)
+    number = db.Column('number',db.Integer)
     permissions = db.Column('permissions',db.Integer)
     description = db.Column('description',db.Text,index=True,unique=True)
     #this is how many "permission points" this module is worth???
-    increase = db.Column('increase',db.Integer)
+    # increase = db.Column('increase',db.Integer)
     #this is the "skill" obtained by completing the module.  This would go on the skills page.
     skill = db.Column('skill',db.Text,index=True,unique=True)
+    xp = db.Column('xp',db.Integer)
     #would this be a many-to-one?
     # case = db.relationship('Case',backref='module',lazy='dynamic')
     quizzes = db.relationship('Quiz',backref='module',lazy='dynamic')
 
+    # def__init__(self):
+    #     pass
 
     def __init__(self,module):
         self.module = module
 
-    # modules = {
-    #         'Syntax'        :   [-1]*3,
-    #         'Phonology'     :   [-1]*3,
-    #         'Morphology'    :   [-1]*3,
-    #         'Computational' :   [-1]*7
-    # }
 
     @staticmethod
-    def add_module(module,rank,level,description):
+    def add_module(module,number=None,user_rank=None,level=None,description=None,skill=None,xp=None):
         mod_name = Module.query.filter_by(module=module).first()
         if mod_name is None:
             mod_name = Module(module=module)
-        rank = Rank.query.filter_by(rank=rank).first()
-        level = Level.query.filter_by(level=level).first()
-        # print(rank,level)
-        print(rank.permissions,level.permissions)
-        # print(rank.query.filter('permissions'))
-        # rank_permissions = rank.permissions
-        # level_permissions = level.permissions
-        mod_name.permissions = int(rank.permissions) + int(level.permissions)
-        mod_name.description = description
+        if number:
+            mod_name.number = number
+        if user_rank:
+            user_rank = UserRank.query.filter_by(user_rank=user_rank).first()
+        if level:
+            level = Level.query.filter_by(level=level).first()
+        if user_rank and level:
+            mod_name.permissions = int(user_rank.permissions) + int(level.permissions)
+        # if increase:
+        #     mod_name.increase = increase
+        if description:
+            mod_name.description = description
+        if skill:
+            mod_name.skill = skill
+        if xp:
+            mod_name.xp = xp
         db.session.add(mod_name)
-        db.session.commit()      
+        db.session.commit()
 
 
+    @staticmethod
+    def csv_upload():
+        print(os.getcwd())
+        path = "app/mod_list.csv"
+        f = open(path,'r').readlines()
+        for l in f[1:]:     #skip header line
+            line = l.strip().split('\t')
+
+            module      = line[0]           if line[0] else None
+            number      = int(line[1])      if line[1] else None
+            user_rank   = line[2]           if line[2] else None
+            level       = line[3]           if line[3] else None
+            description = line[4]           if line[4] else None
+            skill       = line[5]           if line[5] else None
+            xp          = int(line[6],0)    if line[6] else None
+
+            Module.add_module(module,number=number,user_rank=user_rank,level=level,
+                            description=description,skill=skill,xp=xp)
+
+
+
+    @staticmethod
     def remove_module(module):
         mod_name = Module.query.filter_by(module=module).first()
         if mod_name is None:
@@ -228,37 +264,43 @@ class Quiz(db.Model):
     #this should be a percentage value specifying the percentage of correct questions to pass the quiz
     passing_threshold = db.Column('passing_threshold',db.Float)
     passed = db.Column('passed',db.Boolean)
-    xp = db.Column('xp',db.Integer)
+    # xp = db.Column('xp',db.Integer)
     
     #refs
     # modules = db.relationship('Module',backref='quiz',lazy='dynamic')
     skills = db.relationship('Skill',backref='quiz',lazy='select',uselist=False)
-    questions = db.relationship('Question_Library',backref='quiz',lazy='dynamic')
+    questions = db.relationship('QuestionLibrary',backref='quiz',lazy='dynamic')
     # skill_id = db.Column('skill',db.String(50),unique=True,index=True)
     module_id = db.Column(db.Integer,db.ForeignKey('modules.id'),nullable=True)
     # question_id = db.Column(db.Integer,db.ForeignKey('questions.id'))
 
-    def __init__(self,quiz,description,threshold):
+    def __init__(self,quiz):
         self.quiz = quiz
-        # self.permissions = permissions
-        self.description = description
-        self.passing_threshold = threshold
         self.passed = False
 
-
-    def add_quiz(line):
-        quiz_name = Quiz.query.filter_by(quiz=line[0]).first()
-        #line[0] is the quiz name
+    @staticmethod
+    def add_quiz(quiz,permissions=None,description=None,passing_threshold=None,module=None):
+        quiz_name = Quiz.query.filter_by(quiz=quiz).first()
         if quiz_name is None:
-            quiz_name = Quiz(quiz=line[0])
-        quiz_name.permissions = line[1]
-        quiz_name.description = line[2]
-        quiz_name.skill_id = Skill.query.filter_by(skill=line[3])
+            quiz_name = Quiz(quiz=quiz)
+        if permissions:
+            quiz_name.permissions = permissions
+        if description:
+            quiz_name.description = description
+        if passing_threshold:
+            quiz_name.passing_threshold = passing_threshold
+        # if xp:
+        #     quiz_name.xp = xp
+        if module:
+            quiz_name.module = Module.query.filter_by(module=module).first()
         db.session.add(quiz_name)
         db.session.commit()
 
-    def add_question(question):
-        question_id = Question_Library.query.filter_by(question=question).first()
+    # @staticmethod
+    # def add_question(question):
+    #     question_id = Question_Library.query.filter_by(question=question).first()
+    # def __repr__(self):
+    #     return self.module_id
 
 
 
@@ -272,6 +314,7 @@ class Skill(db.Model):
     quiz_id = db.Column(db.Integer,db.ForeignKey('quizzes.id'),nullable=True)
     user_id = db.relationship('User',backref='skill',lazy='dynamic')
 
+    @staticmethod
     def add_skill(skill,quiz):
         skill_set = Skill.query.filter_by(skill=skill).first()
         if skill_set is None:
@@ -288,50 +331,68 @@ class Feature(db.Model):
 
 
 
-class Question_Library(db.Model):
+class QuestionLibrary(db.Model):
     __tablename__ = 'questions'
     id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column('question_id',db.Integer,unique=True)
     question = db.Column('question',db.Text,unique=True,index=True)
     points = db.Column('points',db.Integer)
-    #e.g. short answer, multiple choice, T/F, etc.
+    #question type; options include: 'short' (answer), 'filb' (fill in the blank),
+    # 'mc' (multiple choice),'tf' (true/false)
     q_type = db.Column('q_type',db.String(20))
 
     # quiz_id = db.relationship('Quiz',backref='question',lazy='dynamic')
     quiz_id = db.Column(db.Integer,db.ForeignKey('quizzes.id'),nullable=True)
     #answers
-    answers = db.relationship('Answer_Library',backref='question',lazy='dynamic')
-    # incorrect_answer_id = db.Column('incorr_answer',db.Integer, db.ForeignKey('answers.id'))
-    # correct_answer_id = db.Column('corr_answer',db.Integer, db.ForeignKey('answers.id'))
+    answers = db.relationship('AnswerLibrary',backref='question',lazy='dynamic')
 
-    def __init__(self,question,points,q_type):
-        self.question = question
-        self.points = points
-        self.q_type = q_type
+    def __init__(self,question_id):
+        self.question_id = question_id
+        # self.points = points
+        # self.q_type = q_type
 
-
-    def add_question(line):
-        question_text = Question_Library.query.filter_by(question=line[2])
+    @staticmethod
+    def add_question(question_id,question=None,points=None,q_type=None,quiz=None):
+        question_text = QuestionLibrary.query.filter_by(question_id=question_id).first()
         if question_text is None:
-            question_text = Question_Library(question=line[1],points=line[2],q_type=line[3])
-        
-        #adding answers
-        for item in line[4:len(line)]:
-            Answer_Library.add_answer(item)
-        question_text.correct_answer_id = Answer_Library.query.filter_by(answer=line[4])
-        for item in line[5:len(line)]:
-            question_text.incorrect_answer_id = Answer_Library.query.filter_by(answer=item)
-
-        #linking question to quiz
-        quiz = Quiz.query.filter_by(line[0])
-        quiz.add_question(line[1])
+            question_text = QuestionLibrary(question_id=question_id)
+        if question:
+            question_text.question = question
+        if points:
+            question_text.points = points
+        if q_type:
+            question_text.q_type = q_type
+        if quiz:
+            question_text.quiz = Quiz.query.filter_by(quiz=quiz).first()
         db.session.add(question_text)
         db.session.commit()
 
+        #adding answers
+        # for item in line[4:len(line)]:
+        #     Answer_Library.add_answer(item)
+        # question_text.correct_answer_id = Answer_Library.query.filter_by(answer=line[4])
+        # for item in line[5:len(line)]:
+        #     question_text.incorrect_answer_id = Answer_Library.query.filter_by(answer=item)
+
+        # #linking question to quiz
+        
+        # quiz.add_question(line[1])
+        # db.session.add(question_text)
+        # db.session.commit()
+
+    @staticmethod
+    def remove_question(question):
+        question_text = QuestionLibrary.query.filter_by(question=question).first()
+        if question_text is None:
+            return "Question not found."
+        db.session.delete(question_text)
+        db.session.commit()
 
 
-class Answer_Library(db.Model):
+class AnswerLibrary(db.Model):
     __tablename__ = 'answers'
     id = db.Column(db.Integer, primary_key=True)
+    answer_id = db.Column('answer_id',db.Integer,unique=True)
     answer = db.Column('answer',db.Text,unique=True,index=True)
     truth_value = db.Column('truth_value',db.Boolean)
 
@@ -340,16 +401,33 @@ class Answer_Library(db.Model):
     #backref
     # question = db.relationship('Question_Library',backref='answer',lazy='dynamic')
 
-    def __init__(self,answer):
-        self.answer = answer
+    def __init__(self,answer_id):
+        self.answer_id = answer_id
         
-    def add_answer(answer,truth_value):
-        answer_text = Answer_Library.query.filter_by(answer=answer).first()
+    @staticmethod
+    def add_answer(answer_id,answer=None,truth_value=None,question_id=None):
+        answer_text = AnswerLibrary.query.filter_by(answer_id=answer_id).first()
         if answer_text is None:
-            answer_text = Answer_Library(answer=answer)
-        answer_text.truth_value = truth_value
+            answer_text = AnswerLibrary(answer_id=answer_id)
+        if answer:
+            answer_text.answer = answer
+        if truth_value:
+            answer_text.truth_value = truth_value
+        if question_id:
+            answer_text.question = QuestionLibrary.query.filter_by(question_id=question_id).first()
         db.session.add(answer_text)
         db.session.commit()
+
+
+    @staticmethod
+    def remove_answer(answer_id):
+        answer_text = AnswerLibrary.query.filter_by(answer_id=answer_id).first()
+        if answer_text is None:
+            return "Answer not found."
+        db.session.delete(answer_text)
+        db.session.commit()
+
+
 
 #Currently UNDER CONSTRUCTION
 class Case(db.Model):
@@ -387,7 +465,7 @@ class Case(db.Model):
 #                 continue
 
 #             if FIELD == 'MODULE':
-#                 #pass 'module, rank, level, description' to this function
+#                 #pass 'module, user_rank, level, description' to this function
 #                 Module.add_module(line[0],line[1],line[2],line[3])
 #                 case.module_id = Module.query.filter_by(module=line[0]).first()
 

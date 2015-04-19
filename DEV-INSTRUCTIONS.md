@@ -28,27 +28,29 @@ We're using `Flask-Migrate` to handle changes to the database models.
 
 This will create a database
 
-### Handling the initial migration
+### Handling migrations
 
 `python manage.py db migrate`
 
-### Handling subsequent migrations
+which creates the migration script, and
 
 `python manage.py db upgrade`
 
-### Initialize ranks and levels
+which updates the database with the new migration script.
 
-`python manage.py shell`
+### Add modules
 
-`Rank.initialize_ranks(Rank)`
+Specify a module to be added to the database and its fields by adding a line to 
+mod_list.csv, in the /app directory. Any fields you do not currently wish to add information
+for a given field, simply tab to the next field.
 
-`Level.initialize_levels(Level)`
+### Initialize user ranks, levels, and modules
 
-### Add modules to database
+If the database needs to be recreated, and these values reinitialized, run
 
-`python manage.py shell`
+`python manage.py reboot`
 
-`Module.add_module([name_of_module],[rank_at_which_accessible],[level_at_which_accessible],[description])
+which will automatically load in the specified ranks, levels, and modules.
 
 ### Learn more
 

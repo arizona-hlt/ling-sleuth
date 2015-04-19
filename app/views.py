@@ -74,6 +74,10 @@ def logout():
 def page_not_found(error):
     return 'This page does not exist', 404
 
+@app.errorhandler(404)
+def not_logged_in(error):
+    return 'You must be logged in to access this page', 404
+
 #@app.errorhandler(DatabaseError)
 #def special_exception_handler(error):
 #    return 'Database connection failed', 500
@@ -108,14 +112,31 @@ def modules(module):
     if request.method == 'POST' and quiz.validate():
         flash('Nice work!')
         redirect(url_for('index'))
+    module_list = Module.query.filter_by(module=module.title().lower()).first()
+    # quiz_list = Quiz.query.filter_by(quiz=module_list.module).first()
+    # blah = Blah(quiz_list.quiz)
+    # quiz_form = quiz_dict['fitb']()
+    # quiz_form = quiz_dict['fitb'](quiz_form)
+    # quiz_form.start(quiz_list.quiz)#.start()
+
     return render_template('{0}.html'.format(module),
                             title=module.title(),
-                            form=quiz)
+                            number=module_list.number,
+                            # quiz=quiz_list,
+                            # quiz_name=quiz_list.quiz,
+                            true=True,
+                            false=False,
+                            match=False,
+                            form=quiz)#quiz_form.form)
 
 @app.route('/learn')
 def learn():
+    if current_user.is_anonymous() == True:
+        return not_logged_in(NameError)
+
     user = User.query.filter_by(username=current_user.username).first()
-    user_permissions = user.rank.permissions + user.level.permissions
+
+    user_permissions = user.user_rank.permissions + user.level.permissions
     modules = Module.query.order_by(Module.permissions)
     return render_template('learn.html',
                            title='Learn',
