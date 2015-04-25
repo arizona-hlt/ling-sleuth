@@ -1,0 +1,5 @@
+Module	Quiz	Answer_ID	Answer	Truth_Value	Question_ID	
+n-grams	n-grams	1	trigram.?	1	1
+n-grams	n-grams	2	ten|10	1	2
+n-grams	n-grams	3	seven|7	1	3
+part of speech	part of speech	4	noun phrase	1	4

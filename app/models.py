@@ -227,7 +227,6 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
 
     @staticmethod
     def csv_upload():
-        print(os.getcwd())
         path = "app/mod_list.csv"
         f = open(path,'r').readlines()
         for l in f[1:]:     #skip header line
@@ -263,7 +262,7 @@ class Quiz(db.Model):
     description = db.Column('description',db.Text)
     #this should be a percentage value specifying the percentage of correct questions to pass the quiz
     passing_threshold = db.Column('passing_threshold',db.Float)
-    passed = db.Column('passed',db.Boolean)
+    passed = db.Column('passed',db.Boolean,default=False)
     # xp = db.Column('xp',db.Integer)
     
     #refs
@@ -296,6 +295,23 @@ class Quiz(db.Model):
         db.session.add(quiz_name)
         db.session.commit()
 
+    @staticmethod
+    def csv_upload():
+        path = "app/quiz_list.csv"
+        f = open(path,'r').readlines()
+        for l in f[1:]:     #skip header line
+            line = l.strip().split('\t')
+
+            module              = line[0]           if line[0] else None
+            quiz                = line[1]           if line[1] else None
+            permissions         = int(line[2],0)      if line[2] else None
+            description         = line[3]           if line[3] else None
+            passing_threshold   = float(line[4])    if line[4] else None
+            # q_type              = line[5]           if line[5] else None
+            # xp          = int(line[6],0)    if line[6] else None
+
+            Quiz.add_quiz(quiz=quiz,permissions=permissions,description=description,
+                            passing_threshold=passing_threshold,module=module)
     # @staticmethod
     # def add_question(question):
     #     question_id = Question_Library.query.filter_by(question=question).first()
@@ -379,6 +395,24 @@ class QuestionLibrary(db.Model):
         # quiz.add_question(line[1])
         # db.session.add(question_text)
         # db.session.commit()
+    @staticmethod
+    def csv_upload():
+        path = "app/question_list.csv"
+        f = open(path,'r').readlines()
+        for l in f[1:]:     #skip header line
+            line = l.strip().split('\t')
+
+            module      = line[0]           if line[0] else None
+            quiz        = line[1]           if line[1] else None
+            question_id = int(line[2])      if line[2] else None
+            question    = line[3]           if line[3] else None
+            points      = int(line[4])      if line[4] else None
+            q_type      = line[5]           if line[5] else None
+            # xp          = int(line[6],0)    if line[6] else None
+
+            QuestionLibrary.add_question(question_id=question_id,question=question,points=points,
+                                        q_type=q_type,quiz=quiz)
+
 
     @staticmethod
     def remove_question(question):
@@ -417,6 +451,24 @@ class AnswerLibrary(db.Model):
             answer_text.question = QuestionLibrary.query.filter_by(question_id=question_id).first()
         db.session.add(answer_text)
         db.session.commit()
+
+    @staticmethod
+    def csv_upload():
+        path = "app/answer_list.csv"
+        f = open(path,'r').readlines()
+        for l in f[1:]:     #skip header line
+            line = l.strip().split('\t')
+
+            module          = line[0]           if line[0] else None
+            quiz            = line[1]           if line[1] else None
+            answer_id       = int(line[2])      if line[2] else None
+            answer          = line[3]           if line[3] else None
+            truth_value     = int(line[4])      if line[4] else None
+            question_id     = int(line[5])       if line[5] else None
+            # xp          = int(line[6],0)    if line[6] else None
+
+            AnswerLibrary.add_answer(answer_id=answer_id,answer=answer,truth_value=truth_value,
+                                        question_id=question_id)
 
 
     @staticmethod

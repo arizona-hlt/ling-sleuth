@@ -38,13 +38,15 @@ which creates the migration script, and
 
 which updates the database with the new migration script.
 
-### Add modules
+### Add modules, quizzes, questions, and answers
 
-Specify a module to be added to the database and its fields by adding a line to 
-mod_list.csv, in the /app directory. Any fields you do not currently wish to add information
-for a given field, simply tab to the next field.
+Specify a module/quiz/question/answer to be added to the database and its fields by adding a line to [mod|quiz|question|answer]_list.csv, in the /app directory. Any fields you do not currently wish to add information for, simply tab to the next field.
 
-### Initialize user ranks, levels, and modules
+To add these to the database, run
+
+`python manage.py refresh`
+
+### Initialize user ranks, levels, modules, quizzes, questions, and answers
 
 If the database needs to be recreated, and these values reinitialized, run
 

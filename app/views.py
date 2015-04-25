@@ -3,7 +3,7 @@ from flask.ext.login import login_user , logout_user , current_user , login_requ
 from app import app, db, login_manager
 from .forms import LoginForm, RegisterForm
 from .quizzes import *
-from .models import User, Module
+from .models import User, UserRank, Level, Module, Quiz, Skill, QuestionLibrary as ql, AnswerLibrary as al
 from config import basedir
 from authomatic.adapters import WerkzeugAdapter
 from config import authomatic #used for oauth2 stuff
@@ -111,7 +111,40 @@ def modules(module):
     quiz = quiz()
     if request.method == 'POST' and quiz.validate():
         flash('Nice work!')
-        redirect(url_for('index'))
+        # return redirect(url_for('quiz_submission'))
+        permissions = current_user.user_rank.permissions + current_user.level.permissions
+        print permissions
+        next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
+        # current_user.user_rank = next_rank
+        # print next_rank, current_user.user_rank.permissions + 0x010
+        print next_rank.permissions
+        next_module = Module.query.filter_by(permissions=next_rank.permissions).first()
+        return render_template('quiz_submission.html',
+                                aced=True,
+                                next_module = next_module)
+    elif request.method == 'POST':
+        # calculate user's score by subtracting the points missed from the points total
+        user_score = quiz.score.quiz_points
+        for error in quiz.errors:
+            print quiz.errors[error]
+            error_info = quiz.errors[error]
+            user_score -= error_info[0][1]
+        user_perc = user_score / quiz.score.quiz_points
+        if user_perc > quiz.score.passing:
+            next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
+            current_user.user_rank = next_rank
+            next_module = Module.query.filter_by(next_rank.permissions).first()
+        else:
+            next_module = 'None'
+        #render the quiz submission page
+        return render_template('quiz_submission.html',
+                                aced=False,
+                                next_module=next_module,
+                                quiz=quiz.score.quiz,
+                                questions=quiz.score.questions,
+                                errors=quiz.errors,
+                                user_perc=user_perc,
+                                threshold=quiz.score.passing)
     module_list = Module.query.filter_by(module=module.title().lower()).first()
     # quiz_list = Quiz.query.filter_by(quiz=module_list.module).first()
     # blah = Blah(quiz_list.quiz)
@@ -127,7 +160,12 @@ def modules(module):
                             true=True,
                             false=False,
                             match=False,
-                            form=quiz)#quiz_form.form)
+                            form=quiz)#quiz_form)
+
+@app.route('/quiz_submission')
+def quiz_submission():
+    return render_template('quiz_submission.html')
+
 
 @app.route('/learn')
 def learn():
