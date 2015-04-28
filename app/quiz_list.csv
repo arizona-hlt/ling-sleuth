@@ -1,3 +1,3 @@
-Module	Quiz	Permissions	Description	Passing_Threshold
-n-grams	n-grams	0x011	Introduction to N-grams!	0.9
-part of speech	part of speech	0x022	Introduction to Parts of Speech!	0.9
+Module	Quiz	Description	Passing_Threshold
+n-grams	n-grams	Introduction to N-grams!	0.9
+part of speech	part of speech	Introduction to Parts of Speech!	0.9

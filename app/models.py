@@ -278,12 +278,12 @@ class Quiz(db.Model):
         self.passed = False
 
     @staticmethod
-    def add_quiz(quiz,permissions=None,description=None,passing_threshold=None,module=None):
+    def add_quiz(quiz,description=None,passing_threshold=None,module=None):
         quiz_name = Quiz.query.filter_by(quiz=quiz).first()
         if quiz_name is None:
             quiz_name = Quiz(quiz=quiz)
-        if permissions:
-            quiz_name.permissions = permissions
+        # if permissions:
+        #     quiz_name.permissions = permissions
         if description:
             quiz_name.description = description
         if passing_threshold:

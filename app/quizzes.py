@@ -14,20 +14,29 @@ from app.models import Module, Quiz, QuestionLibrary, AnswerLibrary as al
 class Score:
 
     def __init__(self,quiz):
+        # obtains the quiz object/table in the database
         self.quiz = Quiz.query.filter_by(quiz=quiz).first()
+        # obtains the list of questions associated with the quiz
         self.questions = self.quiz.questions
+        # loops through each question to get each question's point value
+        # add to get the total number of points for the quiz
         self.quiz_points = 0
         for question in self.questions:
             self.quiz_points += question.points
+        # obtains the point threshold / score at which someone can still pass the quiz, e.g. '0.90'
         self.passing = self.quiz.passing_threshold
+        self.incorrect = {}
 
 
 
 class CorrectAnswer(object):
 
     def __init__(self,answer,q_id):
+        # answer to question
         self.answer             = answer
-        self.question_id        = QuestionLibrary.query.filter_by(question_id=q_id).first().question_id
+        # id # of question
+        self.question_id        = q_id    #QuestionLibrary.query.filter_by(question_id=q_id).first().question_id
+        # the points that the question is worth; this is passed back with the Question ID if wrong
         self.question_points    = QuestionLibrary.query.filter_by(question_id=q_id).first().points
 
     def __call__(self, form, field):
@@ -35,33 +44,34 @@ class CorrectAnswer(object):
         re.IGNORECASE
 
         if re.match(self.answer, field.data) is None:
-            raise ValidationError([self.question_id,self.question_points])
+            # if there is no match between the true answer and the submitted answer (i.e. they got it wrong)
+            # raise a validation error that passes back the question_id and points to views.py
+            # raise ValidationError('',[self.question_id, self.question_points])
+            form.score.incorrect[self.question_id] = self.question_points
 
 
 class Ngrams(Form):
-    #name = StringField('Name', id='name')
+    # instantiate the Score class, which contains quiz-specific variables for reference during quiz assessment
     quiz = 'n-grams'
     score = Score(quiz)
-
+    
     trigrams = StringField('What do you call an n-gram of three elements?',
-                            id='1',
-                            validators=[Required("HINT: An n-gram with two elements is a bigram."),
-                                        # Regexp('trigram.?',flags=re.IGNORECASE,message=u'Incorrect'),
+                            # Every time the form is submitted, the validators for each question (field)
+                            # are checked to see if they return a true value, or if an error is raised.
+                            validators=[Required(),
                                         CorrectAnswer(al.query.filter_by(answer_id=1).first().answer,1)])
 
     nchar_bigrams_total = StringField('How many character bigrams are in the word "abracadabra"?',
-                                      id='2',
-                                      validators=[Required("You forgot to count those character bigrams!"),
-                                                  # Regexp('10|ten',flags=re.IGNORECASE,message=u'Incorrect'),
+                                      # id='2',
+                                      validators=[Required(),
                                                   CorrectAnswer(al.query.filter_by(answer_id=2).first().answer,2)])
 
     nchar_bigrams_distinct = StringField('How many DISTINCT character bigrams are in the word "abracadabra"?',
-                                      id='3',
-                                      validators=[Required("Forgettin' somethin'?"),
-                                                  # Regexp("7|seven",flags=re.IGNORECASE,message=u'Incorrect'),
+                                      # id='3',
+                                      validators=[Required(),
                                                   CorrectAnswer(al.query.filter_by(answer_id=3).first().answer,3)])
-    # print 'SCOREs: ', score.user_score
-    submit = SubmitField('Did I pass?', id='grade')#,validators=[Redirect(score.user_score)])
+    # creates the submit button
+    submit = SubmitField('Did I pass?', id='grade')
 
 
 
@@ -71,18 +81,20 @@ class PartOfSpeech(Form):
     score = Score(quiz)
 
     np = StringField('What does NP stand for?',
-                     id='np',
-                     validators=[Required("Unanswered Question!"),
-                                 # Regexp("noun phrase",flags=re.IGNORECASE,message=u'Incorrect'),
+                     # id='np',
+                     validators=[Required(),
                                  CorrectAnswer(al.query.filter_by(answer_id=3).first().answer,3)])
 
     submit = SubmitField('Submit Answers',
-                        id='grade')#,validators=[Redirect(score.user_score)])
+                        id='grade')
 
 
 
-
+# referenced in views.py, enabling it to access the quiz class based on the module name
+# We will need to change this when / if we have multiple quizzes per module.
 quiz_dict = {'n-grams':Ngrams,u'part of speech':PartOfSpeech}
+
+
 
 #,'fitb':FillInTheBlank}
 

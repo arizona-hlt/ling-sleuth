@@ -110,41 +110,50 @@ def modules(module):
     quiz = quiz_dict[module]
     quiz = quiz()
     if request.method == 'POST' and quiz.validate():
-        flash('Nice work!')
-        # return redirect(url_for('quiz_submission'))
-        permissions = current_user.user_rank.permissions + current_user.level.permissions
-        print permissions
-        next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
-        # current_user.user_rank = next_rank
-        # print next_rank, current_user.user_rank.permissions + 0x010
-        print next_rank.permissions
-        next_module = Module.query.filter_by(permissions=next_rank.permissions).first()
-        return render_template('quiz_submission.html',
-                                aced=True,
-                                next_module = next_module)
-    elif request.method == 'POST':
-        # calculate user's score by subtracting the points missed from the points total
-        user_score = quiz.score.quiz_points
-        for error in quiz.errors:
-            print quiz.errors[error]
-            error_info = quiz.errors[error]
-            user_score -= error_info[0][1]
-        user_perc = user_score / quiz.score.quiz_points
-        if user_perc > quiz.score.passing:
+        print quiz.score.incorrect, 'blah'
+        if len(quiz.score.incorrect) == 0:
+            flash('Nice work!')
+            # return redirect(url_for('quiz_submission'))
+            permissions = current_user.user_rank.permissions + current_user.level.permissions
+            print permissions
             next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
-            current_user.user_rank = next_rank
-            next_module = Module.query.filter_by(next_rank.permissions).first()
+            # current_user.user_rank = next_rank
+            # print next_rank, current_user.user_rank.permissions + 0x010
+            print next_rank.permissions
+            next_module = Module.query.filter_by(permissions=next_rank.permissions).first()
+            return render_template('quiz_submission.html',
+                                    aced=True,
+                                    next_module = next_module)
         else:
-            next_module = 'None'
-        #render the quiz submission page
-        return render_template('quiz_submission.html',
-                                aced=False,
-                                next_module=next_module,
-                                quiz=quiz.score.quiz,
-                                questions=quiz.score.questions,
-                                errors=quiz.errors,
-                                user_perc=user_perc,
-                                threshold=quiz.score.passing)
+            # calculate user's score by subtracting the points missed from the points total
+            user_score = quiz.score.quiz_points
+            for error in quiz.score.incorrect:
+                print quiz.score.incorrect[error]
+                # error_info = quiz.errors[error]
+                user_score -= quiz.score.incorrect[error]
+            user_perc = float(user_score) / float(quiz.score.quiz_points)
+            if user_perc > quiz.score.passing:
+                next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
+                print next_rank
+                current_user.user_rank = next_rank
+                next_module = Module.query.filter_by(permissions=next_rank.permissions).first()
+            else:
+                next_module = 'None'
+            #render the quiz submission page
+            return render_template('quiz_submission.html',
+                                    aced=False,
+                                    next_module=next_module,
+                                    quiz=quiz.score.quiz,
+                                    questions=quiz.score.questions,
+                                    errors=quiz.errors,
+                                    user_perc=user_perc,
+                                    threshold=quiz.score.passing)
+    elif request.method == 'POST':
+        print quiz.errors
+        print quiz.score.incorrect
+        if [u'This field is required.'] in quiz.errors.values():
+            pass
+        
     module_list = Module.query.filter_by(module=module.title().lower()).first()
     # quiz_list = Quiz.query.filter_by(quiz=module_list.module).first()
     # blah = Blah(quiz_list.quiz)
@@ -157,9 +166,9 @@ def modules(module):
                             number=module_list.number,
                             # quiz=quiz_list,
                             # quiz_name=quiz_list.quiz,
-                            true=True,
-                            false=False,
-                            match=False,
+                            # true=True,
+                            # false=False,
+                            # match=False,
                             form=quiz)#quiz_form)
 
 @app.route('/quiz_submission')
