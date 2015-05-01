@@ -10,6 +10,7 @@ class User(db.Model):
     provider = db.Column('provider', db.String(10))
     email = db.Column('email',db.String(50), unique=True , index=True)
     registered_on = db.Column('registered_on' , db.DateTime)
+    xp = db.Column('xp',db.Integer, index=True)
 
     user_rank_id = db.Column(db.Integer, db.ForeignKey('user_ranks.id'),nullable=True)
     level_id = db.Column(db.Integer, db.ForeignKey('levels.id'),nullable=True)
@@ -19,14 +20,22 @@ class User(db.Model):
     # case_id = db.Column(db.Integer,db.ForeignKey('cases.id'))
 
 
-    def __init__(self,username,provider=None,email=None):
+    def __init__(self,username,provider=None,email=None,xp=None,registration=None):
         self.username = username
-        self.provider = provider
-        self.email = email
-        self.registered_on = datetime.utcnow()
-        if self.user_rank is None:
+        if provider:
+            self.provider = provider
+        if email:
+            self.email = email
+        if xp:
+            self.xp = xp
+        if registration:
+            self.registered_on = datetime.utcnow()
+        if User.query.filter_by(username=self.username).first().xp is None:
+            self.xp = 0x001
+        print User.query.filter_by(username=self.username).first().user_rank
+        if User.query.filter_by(username=self.username).first().user_rank is None:
             self.user_rank = UserRank.query.filter_by(default=True).first()
-        if self.level is None:
+        if User.query.filter_by(username=self.username).first().level is None:
             self.level = Level.query.filter_by(default=True).first()
 
     def is_authenticated(self):
@@ -69,7 +78,6 @@ class UserRank(db.Model):
 
     def __init__(self, user_rank):
         self.user_rank = user_rank
-        # self.permissions = permissions
 
     #this should only be run once to populate the database with the desired user_ranks
     @staticmethod
@@ -97,7 +105,6 @@ class UserRank(db.Model):
         }
 
         for r in self.user_rank_list:
-            # try:
             level = UserRank.query.filter_by(user_rank=r).first()
             if level is None:
                 level = UserRank(user_rank=r)
@@ -122,7 +129,6 @@ class Level(db.Model):
 
     def __init__(self,level):
         self.level = level
-        # self.permissions = permissions
 
     #This should only be run once to populate the database with the desired levels
     @staticmethod
@@ -134,7 +140,7 @@ class Level(db.Model):
 
 
 
-        for l in range(0x000,level_max):#self.rank_levels:
+        for l in range(0x000,level_max):
             l_name = 'Level-'+str(l+0x001)
             level = Level.query.filter_by(level=l_name).first()
             if level is None:
@@ -145,7 +151,6 @@ class Level(db.Model):
                 level.default = True
             else:
                 level.default = False
-            print(level)
             db.session.add(level)
         db.session.commit()
 
@@ -304,13 +309,13 @@ class Quiz(db.Model):
 
             module              = line[0]           if line[0] else None
             quiz                = line[1]           if line[1] else None
-            permissions         = int(line[2],0)      if line[2] else None
-            description         = line[3]           if line[3] else None
-            passing_threshold   = float(line[4])    if line[4] else None
+            # permissions         = int(line[2],0)      if line[2] else None
+            description         = line[2]           if line[2] else None
+            passing_threshold   = float(line[3])    if line[3] else None
             # q_type              = line[5]           if line[5] else None
             # xp          = int(line[6],0)    if line[6] else None
 
-            Quiz.add_quiz(quiz=quiz,permissions=permissions,description=description,
+            Quiz.add_quiz(quiz=quiz,description=description,
                             passing_threshold=passing_threshold,module=module)
     # @staticmethod
     # def add_question(question):
@@ -427,7 +432,7 @@ class AnswerLibrary(db.Model):
     __tablename__ = 'answers'
     id = db.Column(db.Integer, primary_key=True)
     answer_id = db.Column('answer_id',db.Integer,unique=True)
-    answer = db.Column('answer',db.Text,unique=True,index=True)
+    answer = db.Column('answer',db.Text,index=True)
     truth_value = db.Column('truth_value',db.Boolean)
 
     question_id = db.Column(db.Integer,db.ForeignKey('questions.id'),nullable=True)

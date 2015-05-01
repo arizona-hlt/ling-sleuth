@@ -17,11 +17,13 @@ class Score:
         # obtains the quiz object/table in the database
         self.quiz = Quiz.query.filter_by(quiz=quiz).first()
         # obtains the list of questions associated with the quiz
-        self.questions = self.quiz.questions
+        self.questions = self.quiz.questions #QuestionLibrary.query.filter_by(quiz=self.quiz.quiz_id).all() #self.quiz.questions
+        # print self.questions
         # loops through each question to get each question's point value
         # add to get the total number of points for the quiz
         self.quiz_points = 0
         for question in self.questions:
+            # print question
             self.quiz_points += question.points
         # obtains the point threshold / score at which someone can still pass the quiz, e.g. '0.90'
         self.passing = self.quiz.passing_threshold
@@ -31,9 +33,9 @@ class Score:
 
 class CorrectAnswer(object):
 
-    def __init__(self,answer,q_id):
+    def __init__(self,a_id,q_id):
         # answer to question
-        self.answer             = answer
+        self.answer             = al.query.filter_by(answer_id=a_id).first().answer
         # id # of question
         self.question_id        = q_id    #QuestionLibrary.query.filter_by(question_id=q_id).first().question_id
         # the points that the question is worth; this is passed back with the Question ID if wrong
@@ -59,19 +61,20 @@ class Ngrams(Form):
                             # Every time the form is submitted, the validators for each question (field)
                             # are checked to see if they return a true value, or if an error is raised.
                             validators=[Required(),
-                                        CorrectAnswer(al.query.filter_by(answer_id=1).first().answer,1)])
+                                        #answer_id, question_id (as in database) are required arguments
+                                        CorrectAnswer(1,1)])
 
     nchar_bigrams_total = StringField('How many character bigrams are in the word "abracadabra"?',
                                       # id='2',
                                       validators=[Required(),
-                                                  CorrectAnswer(al.query.filter_by(answer_id=2).first().answer,2)])
+                                                  CorrectAnswer(2,2)])
 
     nchar_bigrams_distinct = StringField('How many DISTINCT character bigrams are in the word "abracadabra"?',
                                       # id='3',
                                       validators=[Required(),
-                                                  CorrectAnswer(al.query.filter_by(answer_id=3).first().answer,3)])
+                                                  CorrectAnswer(3,3)])
     # creates the submit button
-    submit = SubmitField('Did I pass?', id='grade')
+    submit = SubmitField('Submit Answers', id='grade')
 
 
 
@@ -83,7 +86,7 @@ class PartOfSpeech(Form):
     np = StringField('What does NP stand for?',
                      # id='np',
                      validators=[Required(),
-                                 CorrectAnswer(al.query.filter_by(answer_id=3).first().answer,3)])
+                                 CorrectAnswer(4,4)])
 
     submit = SubmitField('Submit Answers',
                         id='grade')

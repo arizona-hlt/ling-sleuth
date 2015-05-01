@@ -3,6 +3,7 @@ from flask.ext.login import login_user , logout_user , current_user , login_requ
 from app import app, db, login_manager
 from .forms import LoginForm, RegisterForm
 from .quizzes import *
+from .special_login import *
 from .models import User, UserRank, Level, Module, Quiz, Skill, QuestionLibrary as ql, AnswerLibrary as al
 from config import basedir
 from authomatic.adapters import WerkzeugAdapter
@@ -59,8 +60,11 @@ def login_with_provider(provider_name):
 
 @app.route('/login',methods=['GET','POST'])
 def login():
+    #create the login form for administrators
+    form=AdminLogin()
     # Choose a login provider
-    return render_template('login.html')
+    return render_template('login.html',
+                            form=form)
 
 
 
@@ -93,12 +97,15 @@ def about():
 @app.route('/profile')
 @login_required
 def profile():
+    print current_user.user_rank
     user = User.query.filter_by(username=current_user.username).first()
+    next_rank = UserRank.query.filter_by(permissions=current_user.user_rank.permissions+0x010).first()
     if user is None:
         abort(404)
     # TODO: Add skills and diagnosis here...
     return render_template('profile.html',
-                           title='Profile')
+                           title='Profile',
+                           next_rank=next_rank)
 
 @app.route('/cases')
 def cases():
@@ -109,48 +116,107 @@ def cases():
 def modules(module):
     quiz = quiz_dict[module]
     quiz = quiz()
+    quiz_object = Quiz.query.filter_by(quiz=quiz.score.quiz.quiz).first()
+    #initialize variable
+    level_up = False
     if request.method == 'POST' and quiz.validate():
-        print quiz.score.incorrect, 'blah'
+        # print quiz.score.incorrect, 'blah'
+        # for question in quiz.score.questions:
+        #     print question.question_id, 'blarg'
+        # print quiz.score.quiz.questions #.questions, 'yip'
         if len(quiz.score.incorrect) == 0:
             flash('Nice work!')
-            # return redirect(url_for('quiz_submission'))
+            user_perc = 1.0
+            # User's current permissions
             permissions = current_user.user_rank.permissions + current_user.level.permissions
-            print permissions
+            # print permissions
+            # Find the xp increase for completing the module
+            added_xp = Module.query.filter_by(module=module).first().xp
+            # Current rank
+            current_rank = current_user.user_rank.user_rank
+            # XP after increase
+            if current_user.xp == None:
+                current_user.xp = 0x001
+            #delete below line
+            current_user.xp = 0x001
+            new_permissions = current_user.xp + (added_xp)
+            # print 'blah', current_user.xp, added_xp
+            current_user.xp = new_permissions
+            #check for a level-up
             next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
-            # current_user.user_rank = next_rank
-            # print next_rank, current_user.user_rank.permissions + 0x010
-            print next_rank.permissions
-            next_module = Module.query.filter_by(permissions=next_rank.permissions).first()
-            return render_template('quiz_submission.html',
+            print 'nr', next_rank, current_user.xp, next_rank.permissions
+            if current_user.xp >= next_rank.permissions:
+                current_user.user_rank = next_rank
+                level_up = True
+            print current_user.user_rank
+            #hack/ workaround - something better would be nice, but necessary to match the next module's
+            #permissions exactly
+            permission_match = current_user.xp + 0x001
+            next_module = None
+            while next_module == None:
+                permission_match -= 0x001
+                next_module = Module.query.filter_by(permissions=permission_match).first()
+            #save any changes to the current user's profile
+            db.session.add(current_user)
+            db.session.commit()
+
+            return render_template('quiz_results.html',
                                     aced=True,
-                                    next_module = next_module)
+                                    level_up=level_up,
+                                    next_module=next_module.module,
+                                    quiz=quiz_object,
+                                    questions=quiz_object.questions,
+                                    errors=quiz.score.incorrect,
+                                    user_score=round(user_perc*100),
+                                    threshold=quiz.score.passing*100)
         else:
             # calculate user's score by subtracting the points missed from the points total
             user_score = quiz.score.quiz_points
             for error in quiz.score.incorrect:
-                print quiz.score.incorrect[error]
-                # error_info = quiz.errors[error]
+                print error, quiz.score.quiz_points, quiz.score.incorrect[error]
                 user_score -= quiz.score.incorrect[error]
             user_perc = float(user_score) / float(quiz.score.quiz_points)
-            if user_perc > quiz.score.passing:
+            print user_perc, quiz.score.passing
+            if user_perc >= quiz.score.passing:
+                #delete below line - currently used to reset user's xp to lowest level, prior to 'upgrade',
+                #this is in place while testing
+                current_user.xp = 0x001
+                new_permissions = current_user.xp + added_xp
+                # print 'blah', current_user.xp, added_xp
+                current_user.xp = new_permissions
+                #find the next rank
                 next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
-                print next_rank
-                current_user.user_rank = next_rank
-                next_module = Module.query.filter_by(permissions=next_rank.permissions).first()
+                #work-around to check if the next rank was actually obtained
+                if current_user.xp >= next_rank.permissions:
+                    current_user.user_rank = next_rank
+                    level_up = True
+                #hack/ workaround - something better would be nice, but necessary to match the next module's
+                #permissions exactly
+                permission_match = current_user.xp + 0x001
+                next_module = None
+                while next_module == None:
+                    permission_match -= 0x001
+                    next_module = Module.query.filter_by(permissions=permission_match).first()
             else:
-                next_module = 'None'
+                next_module = module
+
+            #save any changes to the current user's profile
+            db.session.add(current_user)
+            db.session.commit()
+            
             #render the quiz submission page
-            return render_template('quiz_submission.html',
+            return render_template('quiz_results.html',
                                     aced=False,
+                                    level_up=level_up,
                                     next_module=next_module,
-                                    quiz=quiz.score.quiz,
-                                    questions=quiz.score.questions,
-                                    errors=quiz.errors,
-                                    user_perc=user_perc,
-                                    threshold=quiz.score.passing)
+                                    quiz=quiz_object,
+                                    questions=quiz_object.questions,
+                                    errors=quiz.score.incorrect,
+                                    user_score=round(user_perc*100),
+                                    threshold=quiz.score.passing*100)
     elif request.method == 'POST':
-        print quiz.errors
-        print quiz.score.incorrect
+        # print quiz.errors
+        # print quiz.score.incorrect
         if [u'This field is required.'] in quiz.errors.values():
             pass
         
@@ -171,7 +237,7 @@ def modules(module):
                             # match=False,
                             form=quiz)#quiz_form)
 
-@app.route('/quiz_submission')
+@app.route('/quiz_results')
 def quiz_submission():
     return render_template('quiz_submission.html')
 
@@ -214,7 +280,7 @@ def handle_user(result):
     login_user(registered_user)
 
 def register_user(result):
-    user = User(username=result.user.name, provider=result.provider.name, email=result.user.email)
+    user = User(username=result.user.name, provider=result.provider.name, email=result.user.email, xp=0.001, registration=True)
     db.session.add(user)
     db.session.commit()
     flash("You've been registered!")

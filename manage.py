@@ -13,24 +13,30 @@ def make_shell_context():
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
-def reboot():
-	UserRank.initialize_ranks(UserRank)
-	Level.initialize_levels(Level)
-	Module.csv_upload()
-	Quiz.csv_upload()
-	QuestionLibrary.csv_upload()
-	AnswerLibrary.csv_upload()
-manager.add_command('reboot', reboot())
+# # class Reboot():
+# 	def reboot():
+# 		print 'Rebooting...'
+# 		UserRank.initialize_ranks(UserRank)
+# 		Level.initialize_levels(Level)
+# 		Module.csv_upload()
+# 		Quiz.csv_upload()
+# 		QuestionLibrary.csv_upload()
+# 		AnswerLibrary.csv_upload()
+#		User.add_admin()
+# manager.add_command('reboot', Reboot())
 
-def refresh():
-	Module.csv_upload()
-	Quiz.csv_upload()
-	QuestionLibrary.csv_upload()
-	AnswerLibrary.csv_upload()
-manager.add_command('refresh', refresh())
+# # class Refresh():
+# def refresh():
+# 	print 'Refreshing...'
+# 	Module.csv_upload()
+# 	Quiz.csv_upload()
+# 	QuestionLibrary.csv_upload()
+# 	AnswerLibrary.csv_upload()
+#	User.add_admin()
+# manager.add_command('refresh', Refresh())
 
-# if __name__ == '__main__':
-#     manager.run()
+if __name__ == '__main__':
+    manager.run()
 
 
 
