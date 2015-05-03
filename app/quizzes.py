@@ -73,6 +73,7 @@ class Ngrams(Form):
                                       # id='3',
                                       validators=[Required(),
                                                   CorrectAnswer(3,3)])
+    
     # creates the submit button
     submit = SubmitField('Submit Answers', id='grade')
 

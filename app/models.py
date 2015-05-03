@@ -38,6 +38,11 @@ class User(db.Model):
         if User.query.filter_by(username=self.username).first().level is None:
             self.level = Level.query.filter_by(default=True).first()
 
+    def add_admin(self):
+        self.username = 'admin'
+        self.xp = Permissions.ADMINISTRATOR
+        return True
+
     def is_authenticated(self):
         return True
 

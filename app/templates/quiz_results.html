@@ -10,7 +10,7 @@
 
 {% block title %} {{current_user.username}}'s Quiz Results {% endblock title %}
 
-{% if aced or user_score > threshold %}
+{% if aced or user_score >= threshold %}
 	<h2> Congratulations! </h2>
 	<p> You passed the quiz with a score of {{user_score}}%!  Click <a href="{{url_for( 'modules', module = next_module)}}">here</a> to advance to the {{next_module.module}} module.
 {% else %}

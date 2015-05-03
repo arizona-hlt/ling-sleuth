@@ -116,6 +116,7 @@ def cases():
 def modules(module):
     quiz = quiz_dict[module]
     quiz = quiz()
+    print quiz.data
     quiz_object = Quiz.query.filter_by(quiz=quiz.score.quiz.quiz).first()
     #initialize variable
     level_up = False
@@ -159,7 +160,7 @@ def modules(module):
             #save any changes to the current user's profile
             db.session.add(current_user)
             db.session.commit()
-
+            print quiz.data
             return render_template('quiz_results.html',
                                     aced=True,
                                     level_up=level_up,

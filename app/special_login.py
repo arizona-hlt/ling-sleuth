@@ -8,13 +8,26 @@ from wtforms.validators import ValidationError, Required, Regexp
 from wtforms.fields.html5 import EmailField
 
 
+class PasswordCheck(object):
+
+    def __init__(self,password):
+        # answer to question
+        self.password = password
+
+    def __call__(self, form, field):
+
+        re.IGNORECASE
+
+
 
 class AdminLogin(Form):
 
 	username = StringField('Username',
-							validators=[Required()])
+							validators=[Required(),
+							Regexp('admin')])
 
 	password = PasswordField('Password',
-							validators=[Required()])
+							validators=[Required(),
+							PasswordCheck])
 
 	submit = SubmitField('Special User Login')
