@@ -6,7 +6,7 @@ from wtforms.form import BaseForm
 from wtforms import TextField, StringField, HiddenField, PasswordField, SubmitField, SelectField
 from wtforms.validators import ValidationError, Required, Regexp
 from wtforms.fields.html5 import EmailField
-# from wtforms.ext.sqlalchemy.orm import model_form
+from wtforms.ext.appengine.db import model_form
 from app.models import Module, Quiz, QuestionLibrary, AnswerLibrary as al
 
 # al = AnswerLibrary()
@@ -36,6 +36,7 @@ class CorrectAnswer(object):
     def __init__(self,a_id,q_id):
         # answer to question
         self.answer             = al.query.filter_by(answer_id=a_id).first().answer
+        # print self.answer
         # id # of question
         self.question_id        = q_id    #QuestionLibrary.query.filter_by(question_id=q_id).first().question_id
         # the points that the question is worth; this is passed back with the Question ID if wrong
@@ -52,30 +53,30 @@ class CorrectAnswer(object):
             form.score.incorrect[self.question_id] = self.question_points
 
 
-class Ngrams(Form):
-    # instantiate the Score class, which contains quiz-specific variables for reference during quiz assessment
-    quiz = 'n-grams'
-    score = Score(quiz)
+# class Ngrams(Form):
+#     # instantiate the Score class, which contains quiz-specific variables for reference during quiz assessment
+#     quiz = 'n-grams'
+#     score = Score(quiz)
     
-    trigrams = StringField('What do you call an n-gram of three elements?',
-                            # Every time the form is submitted, the validators for each question (field)
-                            # are checked to see if they return a true value, or if an error is raised.
-                            validators=[Required(),
-                                        #answer_id, question_id (as in database) are required arguments
-                                        CorrectAnswer(1,1)])
+#     trigrams = StringField('What do you call an n-gram of three elements?',
+#                             # Every time the form is submitted, the validators for each question (field)
+#                             # are checked to see if they return a true value, or if an error is raised.
+#                             validators=[Required(),
+#                                         #answer_id, question_id (as in database) are required arguments
+#                                         CorrectAnswer(1,1)])
 
-    nchar_bigrams_total = StringField('How many character bigrams are in the word "abracadabra"?',
-                                      # id='2',
-                                      validators=[Required(),
-                                                  CorrectAnswer(2,2)])
+#     nchar_bigrams_total = StringField('How many character bigrams are in the word "abracadabra"?',
+#                                       # id='2',
+#                                       validators=[Required(),
+#                                                   CorrectAnswer(2,2)])
 
-    nchar_bigrams_distinct = StringField('How many DISTINCT character bigrams are in the word "abracadabra"?',
-                                      # id='3',
-                                      validators=[Required(),
-                                                  CorrectAnswer(3,3)])
-    
-    # creates the submit button
-    submit = SubmitField('Submit Answers', id='grade')
+#     nchar_bigrams_distinct = StringField('How many DISTINCT character bigrams are in the word "abracadabra"?',
+#                                       # id='3',
+#                                       validators=[Required(),
+#                                                   CorrectAnswer(3,3)])
+
+#     # creates the submit button
+#     submit = SubmitField('Submit Answers', id='grade')
 
 
 
@@ -84,15 +85,57 @@ class PartOfSpeech(Form):
     quiz = 'part of speech'
     score = Score(quiz)
 
-    np = StringField('What does NP stand for?',
-                     # id='np',
-                     validators=[Required(),
-                                 CorrectAnswer(4,4)])
+    # np = StringField('What does NP stand for?',
+    #                  # id='np',
+    #                  validators=[Required(),
+    #                              CorrectAnswer(4,4)])
 
-    submit = SubmitField('Submit Answers',
-                        id='grade')
+    # submit = SubmitField('Submit Answers',
+    #                     id='grade')
+
+class Ngrams(Form):
+
+    quiz = 'n-grams'
+    score = Score(quiz)
+
+    #Unfortunately, including this function breaks the code - something with having an __init__
+    #function does not allow the Fields to be bound.  Looks like we'll have to create a separate class
+    #for each quiz manually, and manually copy the above two lines, changing the name of the quiz
+    # def __init__(self,quiz):
+    #     self.quiz = quiz
+    #     self.score = Score(self.quiz)
 
 
+class CreateForm():
+
+    def __init__(self,module):
+        self.quiz = module
+
+    def create(self):
+        new_form = quiz_dict[self.quiz]
+
+        i=1
+        quiz_object = Quiz.query.filter_by(quiz=self.quiz).first()
+
+        questions = quiz_object.questions
+
+        for question in questions:
+
+            #question id
+            q_id = question.question_id
+            #answer id
+            a_id = al.query.filter_by(question_id=q_id).first().answer_id
+
+            #set a Field attribute - critically prior to class instatiation
+            setattr(new_form, 'q{0}'.format(i), StringField(question.question,validators=[Required(),CorrectAnswer(a_id,q_id)]))
+            #increment variable naming counter
+            i+=1
+
+        setattr(new_form,'submit', SubmitField('Submit Answers'))
+        #instantiate the class; can't have any functions (even init) within the class
+        new_form = new_form()     #(self.quiz)
+
+        return new_form
 
 # referenced in views.py, enabling it to access the quiz class based on the module name
 # We will need to change this when / if we have multiple quizzes per module.

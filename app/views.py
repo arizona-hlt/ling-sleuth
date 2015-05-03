@@ -115,8 +115,9 @@ def cases():
 @app.route('/learn/<module>', methods=['GET', 'POST'])
 def modules(module):
     quiz = quiz_dict[module]
-    quiz = quiz()
-    print quiz.data
+    cf = CreateForm(module)
+    quiz = cf.create()#quiz()
+    # print quiz.data
     quiz_object = Quiz.query.filter_by(quiz=quiz.score.quiz.quiz).first()
     #initialize variable
     level_up = False
