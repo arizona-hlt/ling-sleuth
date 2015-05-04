@@ -17,16 +17,15 @@ class Score:
         # obtains the quiz object/table in the database
         self.quiz = Quiz.query.filter_by(quiz=quiz).first()
         # obtains the list of questions associated with the quiz
-        self.questions = self.quiz.questions #QuestionLibrary.query.filter_by(quiz=self.quiz.quiz_id).all() #self.quiz.questions
-        # print self.questions
+        self.questions = self.quiz.questions 
         # loops through each question to get each question's point value
         # add to get the total number of points for the quiz
         self.quiz_points = 0
         for question in self.questions:
-            # print question
             self.quiz_points += question.points
         # obtains the point threshold / score at which someone can still pass the quiz, e.g. '0.90'
         self.passing = self.quiz.passing_threshold
+        # dictionary that holds the information of the question if that question is incorrect
         self.incorrect = {}
 
 
@@ -36,7 +35,6 @@ class CorrectAnswer(object):
     def __init__(self,a_id,q_id):
         # answer to question
         self.answer             = al.query.filter_by(answer_id=a_id).first().answer
-        # print self.answer
         # id # of question
         self.question_id        = q_id    #QuestionLibrary.query.filter_by(question_id=q_id).first().question_id
         # the points that the question is worth; this is passed back with the Question ID if wrong
@@ -53,57 +51,24 @@ class CorrectAnswer(object):
             form.score.incorrect[self.question_id] = self.question_points
 
 
-# class Ngrams(Form):
-#     # instantiate the Score class, which contains quiz-specific variables for reference during quiz assessment
-#     quiz = 'n-grams'
-#     score = Score(quiz)
-    
-#     trigrams = StringField('What do you call an n-gram of three elements?',
-#                             # Every time the form is submitted, the validators for each question (field)
-#                             # are checked to see if they return a true value, or if an error is raised.
-#                             validators=[Required(),
-#                                         #answer_id, question_id (as in database) are required arguments
-#                                         CorrectAnswer(1,1)])
+# Must manually create a physical class; inherits from the Form metaclass
+class Ngrams(Form):
 
-#     nchar_bigrams_total = StringField('How many character bigrams are in the word "abracadabra"?',
-#                                       # id='2',
-#                                       validators=[Required(),
-#                                                   CorrectAnswer(2,2)])
+    # must manually specify the name of the quiz
+    quiz = 'n-grams'
+    score = Score(quiz)
 
-#     nchar_bigrams_distinct = StringField('How many DISTINCT character bigrams are in the word "abracadabra"?',
-#                                       # id='3',
-#                                       validators=[Required(),
-#                                                   CorrectAnswer(3,3)])
-
-#     # creates the submit button
-#     submit = SubmitField('Submit Answers', id='grade')
-
-
+    # Unfortunately, including this function (below) breaks the code - something with having an __init__
+    # function does not allow the Fields to be bound.  Looks like we'll have to create a separate class
+    # for each quiz manually, and manually copy the above two lines, changing the name of the quiz
+    #  def __init__(self,quiz):
+    #      self.quiz = quiz
+    #      self.score = Score(self.quiz)
 
 class PartOfSpeech(Form):
 
     quiz = 'part of speech'
     score = Score(quiz)
-
-    # np = StringField('What does NP stand for?',
-    #                  # id='np',
-    #                  validators=[Required(),
-    #                              CorrectAnswer(4,4)])
-
-    # submit = SubmitField('Submit Answers',
-    #                     id='grade')
-
-class Ngrams(Form):
-
-    quiz = 'n-grams'
-    score = Score(quiz)
-
-    #Unfortunately, including this function breaks the code - something with having an __init__
-    #function does not allow the Fields to be bound.  Looks like we'll have to create a separate class
-    #for each quiz manually, and manually copy the above two lines, changing the name of the quiz
-    # def __init__(self,quiz):
-    #     self.quiz = quiz
-    #     self.score = Score(self.quiz)
 
 
 class CreateForm():
@@ -112,30 +77,36 @@ class CreateForm():
         self.quiz = module
 
     def create(self):
+        #obtain the reference for the quiz class; do not instatiate yet
         new_form = quiz_dict[self.quiz]
-
+        # counter for num of questions - to change the q name each iteration
         i=1
+        # quiz database object - to be able to access its db fields
         quiz_object = Quiz.query.filter_by(quiz=self.quiz).first()
 
+        # list of all question objectss associated with the quiz
         questions = quiz_object.questions
 
         for question in questions:
 
-            #question id
+            # question id
             q_id = question.question_id
-            #answer id
+            # answer id
             a_id = al.query.filter_by(question_id=q_id).first().answer_id
-
-            #set a Field attribute - critically prior to class instatiation
+            # set a Field attribute - critically prior to class instatiation
             setattr(new_form, 'q{0}'.format(i), StringField(question.question,validators=[Required(),CorrectAnswer(a_id,q_id)]))
-            #increment variable naming counter
+            # increment variable naming counter
             i+=1
-
+        # set the submit button field
         setattr(new_form,'submit', SubmitField('Submit Answers'))
-        #instantiate the class; can't have any functions (even init) within the class
-        new_form = new_form()     #(self.quiz)
-
+        # instantiate the class AFTER the field attributes have been declared (Above);
+        # can't have any functions (even init) within the class, or fields become unbounded
+        new_form = new_form()
+        # reset dict of incorrect questions
+        new_form.score.incorrect = {}
+        # return the instatiated class object to views.py
         return new_form
+
 
 # referenced in views.py, enabling it to access the quiz class based on the module name
 # We will need to change this when / if we have multiple quizzes per module.
@@ -143,34 +114,6 @@ quiz_dict = {'n-grams':Ngrams,u'part of speech':PartOfSpeech}
 
 
 
-#,'fitb':FillInTheBlank}
 
-
-# class FillInTheBlank(Form):
-
-#     # form = BaseForm({
-#     #     'name':StringField('What do you call an n-gram of three elements?',
-#     #                         id='num_char_bigrams',
-#     #                         validators=[Required("HINT: An n-gram with two elements is a bigram.")]),
-#     #     'blah':SubmitField('Did I pass?', id='grade')
-#     #     })
-#     def __call__(self,quiz):
-#         self.quiz = Quiz.query.filter_by(quiz=quiz).first()
-
-#         self.questions = Question_Library.query.filter_by(quiz=self.quiz).all()
-#         # print self.questions
-#         for q in questions:
-#             bound_field = StringField(q.question,
-#                                 id=str(q.question_id),
-#                                 validators=[Required("Fill in all the blanks!")])#.bind(form=self,name='blah')
-#         #     self._unbound_fields.append(("internal_field", unbound_field))
-#         #     bound_field = unbound_field.bind(self, 'X'+str(q.question_id), translations=self._get_translations())
-#         #     self._fields['X'+str(q.question_id)] = bound_field
-#             self.__dict__['X'+str(q.question_id)] = bound_field
-#             setattr(self,'X'+str(q.question_id),bound_field)
-
-#         # submit = SubmitField('Did I pass?', id='grade')
-#         # self.__dict__['submit'] = SubmitField('Did I pass?', id='grade')
-#         # print self._unbound_fields
 
 

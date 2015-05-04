@@ -12,10 +12,10 @@
 
 {% if aced or user_score >= threshold %}
 	<h2> Congratulations! </h2>
-	<p> You passed the quiz with a score of {{user_score}}%!  Click <a href="{{url_for( 'modules', module = next_module)}}">here</a> to advance to the {{next_module.module}} module.
+	<p> You passed the quiz with a score of {{user_score}}%!  Click <a href="{{url_for('learn')}}">here</a> to choose the next active module.
 {% else %}
 	<h2> Sorry! </h2>
-	<p> Your score was {{user_score}}% - you didn't pass the quiz.  It's ok - reread the content from the module and <a href="{{url_for( 'modules', module = next_module)}}">try again!</a> </p>
+	<p> Your score was {{user_score}}% - you didn't pass the quiz.  It's ok - pick a different active module to work on or reread the content from the previous module and <a href="{{url_for('learn')}}">try again!</a> </p>
 {% endif %}
 
 <p> </p>
