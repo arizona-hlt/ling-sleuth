@@ -57,7 +57,6 @@ class User(db.Model):
             return True
 
     def set_anonymous(self):
-        # self.username = 'Guest'
         self.user_rank = UserRank.query.filter_by(user_rank='Anonymous').first()
         self.level = Level.query.filter_by(default=True).first()
 
@@ -194,17 +193,12 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
     number = db.Column('number',db.Integer)
     permissions = db.Column('permissions',db.Integer)
     description = db.Column('description',db.Text,index=True,unique=True)
-    #this is how many "permission points" this module is worth???
-    # increase = db.Column('increase',db.Integer)
     #this is the "skill" obtained by completing the module.  This would go on the skills page.
     skill = db.Column('skill',db.Text,index=True,unique=True)
     xp = db.Column('xp',db.Integer)
     #would this be a many-to-one?
     # case = db.relationship('Case',backref='module',lazy='dynamic')
     quizzes = db.relationship('Quiz',backref='module',lazy='dynamic')
-
-    # def__init__(self):
-    #     pass
 
     def __init__(self,module):
         self.module = module
@@ -223,8 +217,6 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
             level = Level.query.filter_by(level=level).first()
         if user_rank and level:
             mod_name.permissions = int(user_rank.permissions) + int(level.permissions)
-        # if increase:
-        #     mod_name.increase = increase
         if description:
             mod_name.description = description
         if skill:
@@ -268,20 +260,16 @@ class Quiz(db.Model):
     __tablename__ = 'quizzes'
     id = db.Column(db.Integer,primary_key=True)
     quiz = db.Column('quiz',db.String(50),unique=True,index=True)
-    # permissions = db.Column('permissions',db.Integer)
     description = db.Column('description',db.Text)
     #this should be a percentage value specifying the percentage of correct questions to pass the quiz
     passing_threshold = db.Column('passing_threshold',db.Float)
     passed = db.Column('passed',db.Boolean,default=False)
-    # xp = db.Column('xp',db.Integer)
     
     #refs
-    # modules = db.relationship('Module',backref='quiz',lazy='dynamic')
     skills = db.relationship('Skill',backref='quiz',lazy='select',uselist=False)
     questions = db.relationship('QuestionLibrary',backref='quiz',lazy='dynamic')
-    # skill_id = db.Column('skill',db.String(50),unique=True,index=True)
     module_id = db.Column(db.Integer,db.ForeignKey('modules.id'),nullable=True)
-    # question_id = db.Column(db.Integer,db.ForeignKey('questions.id'))
+
 
     def __init__(self,quiz):
         self.quiz = quiz
@@ -292,14 +280,10 @@ class Quiz(db.Model):
         quiz_name = Quiz.query.filter_by(quiz=quiz).first()
         if quiz_name is None:
             quiz_name = Quiz(quiz=quiz)
-        # if permissions:
-        #     quiz_name.permissions = permissions
         if description:
             quiz_name.description = description
         if passing_threshold:
             quiz_name.passing_threshold = passing_threshold
-        # if xp:
-        #     quiz_name.xp = xp
         if module:
             quiz_name.module = Module.query.filter_by(module=module).first()
         db.session.add(quiz_name)
@@ -314,19 +298,12 @@ class Quiz(db.Model):
 
             module              = line[0]           if line[0] else None
             quiz                = line[1]           if line[1] else None
-            # permissions         = int(line[2],0)      if line[2] else None
             description         = line[2]           if line[2] else None
             passing_threshold   = float(line[3])    if line[3] else None
-            # q_type              = line[5]           if line[5] else None
-            # xp          = int(line[6],0)    if line[6] else None
+
 
             Quiz.add_quiz(quiz=quiz,description=description,
                             passing_threshold=passing_threshold,module=module)
-    # @staticmethod
-    # def add_question(question):
-    #     question_id = Question_Library.query.filter_by(question=question).first()
-    # def __repr__(self):
-    #     return self.module_id
 
 
 
@@ -336,7 +313,7 @@ class Skill(db.Model):
     skill = db.Column('skill',db.String(100),unique=True,index=True)
     feature = db.Column('feature',db.String(50),unique=True,index=True)
     #not sure if this should be associated with passing a quiz/module or not.
-    #ref
+    #refs
     quiz_id = db.Column(db.Integer,db.ForeignKey('quizzes.id'),nullable=True)
     user_id = db.relationship('User',backref='skill',lazy='dynamic')
 
@@ -367,15 +344,13 @@ class QuestionLibrary(db.Model):
     # 'mc' (multiple choice),'tf' (true/false)
     q_type = db.Column('q_type',db.String(20))
 
-    # quiz_id = db.relationship('Quiz',backref='question',lazy='dynamic')
     quiz_id = db.Column(db.Integer,db.ForeignKey('quizzes.id'),nullable=True)
-    #answers
+
     answers = db.relationship('AnswerLibrary',backref='question',lazy='dynamic')
 
     def __init__(self,question_id):
         self.question_id = question_id
-        # self.points = points
-        # self.q_type = q_type
+
 
     @staticmethod
     def add_question(question_id,question=None,points=None,q_type=None,quiz=None):
@@ -393,18 +368,7 @@ class QuestionLibrary(db.Model):
         db.session.add(question_text)
         db.session.commit()
 
-        #adding answers
-        # for item in line[4:len(line)]:
-        #     Answer_Library.add_answer(item)
-        # question_text.correct_answer_id = Answer_Library.query.filter_by(answer=line[4])
-        # for item in line[5:len(line)]:
-        #     question_text.incorrect_answer_id = Answer_Library.query.filter_by(answer=item)
 
-        # #linking question to quiz
-        
-        # quiz.add_question(line[1])
-        # db.session.add(question_text)
-        # db.session.commit()
     @staticmethod
     def csv_upload():
         path = "app/question_list.csv"
@@ -418,7 +382,6 @@ class QuestionLibrary(db.Model):
             question    = line[3]           if line[3] else None
             points      = int(line[4])      if line[4] else None
             q_type      = line[5]           if line[5] else None
-            # xp          = int(line[6],0)    if line[6] else None
 
             QuestionLibrary.add_question(question_id=question_id,question=question,points=points,
                                         q_type=q_type,quiz=quiz)
@@ -442,8 +405,6 @@ class AnswerLibrary(db.Model):
 
     question_id = db.Column(db.Integer,db.ForeignKey('questions.id'),nullable=True)
 
-    #backref
-    # question = db.relationship('Question_Library',backref='answer',lazy='dynamic')
 
     def __init__(self,answer_id):
         self.answer_id = answer_id
@@ -475,7 +436,6 @@ class AnswerLibrary(db.Model):
             answer          = line[3]           if line[3] else None
             truth_value     = int(line[4])      if line[4] else None
             question_id     = int(line[5])       if line[5] else None
-            # xp          = int(line[6],0)    if line[6] else None
 
             AnswerLibrary.add_answer(answer_id=answer_id,answer=answer,truth_value=truth_value,
                                         question_id=question_id)
