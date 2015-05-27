@@ -1,0 +1,207 @@
+{% extends "projects.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block project_intro %}
+<h2>Sentiment Analysis Activity</h2>
+
+<p>Add positive and negative words into the appropriate sections; these are marked by **** asterisks.</p>
+{% endblock project_intro %}
+
+{% block demonstration %}
+<iframe src="https://trinket.io/embed/python/81ea65aaeb" width="100%" height="600" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>
+<!-- <html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script> 
+<script src="http://www.skulpt.org/static/skulpt.min.js" type="text/javascript"></script> 
+<script src="http://www.skulpt.org/static/skulpt-stdlib.js" type="text/javascript"></script> 
+</head>
+<body> 
+ 
+<script type="text/javascript"> 
+// output functions are configurable.  This one just appends some text
+// to a pre element.
+function outf(text) { 
+    var mypre = document.getElementById("output"); 
+    mypre.innerHTML = mypre.innerHTML + text; 
+} 
+function builtinRead(x) {
+    if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+            throw "File not found: '" + x + "'";
+    return Sk.builtinFiles["files"][x];
+}
+
+// Here's everything you need to run a python program in skulpt
+// grab the code from your textarea
+// get a reference to your pre element for output
+// configure the output function
+// call Sk.importMainWithBody()
+function runit() { 
+   var prog = document.getElementById("yourcode").value; 
+   var mypre = document.getElementById("output"); 
+   mypre.innerHTML = ''; 
+   Sk.pre = "output";
+   Sk.configure({output:outf, read:builtinRead}); 
+   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = 'mycanvas';
+   var myPromise = Sk.misceval.asyncToPromise(function() {
+       return Sk.importMainWithBody("<stdin>", false, prog, true);
+   });
+   myPromise.then(function(mod) {
+       console.log('success');
+   },
+       function(err) {
+       console.log(err.toString());
+   });
+} 
+</script> 
+ 
+<h3>Enter your words in the code here!</h3> 
+<form> 
+<textarea id="yourcode" cols="80" rows="20">
+#sentiment_demo.py
+#coded by Kristen Howe
+
+from __future__ import division
+import re
+
+def create_dictionary(lines):
+    ### Returns a dictionary where the key is the review's text
+    ### and the value is the review's ranking
+    review2rank={}
+    for line in lines:
+        if line !="":
+            split_line=line.split("\t")
+            ranking=split_line[0]
+            text=split_line[1]
+            review2rank[text]=ranking
+    return review2rank        
+            
+def create_list(lines):
+    ### Returns a list of reviews
+    reviews=[]
+    for line in lines:
+        if line!="":
+            split_line=line.split("\t")
+            review=split_line[1]
+            reviews.append(review)
+    return reviews
+
+def get_accuracy_overall(original, predictions):
+    overall_accuracy=0
+    total_review_num=len(original)
+    for (review, p_ranking) in predictions.items():
+        o_ranking=int(original[review])
+        if p_ranking==o_ranking:
+            overall_accuracy+=1
+    accuracy=overall_accuracy/total_review_num
+    print "OVERALL ACCURACY"
+    print "TOTAL CORRECT:", overall_accuracy, "correct out of", total_review_num
+    print "Accuracy = {0}%".format(accuracy*100)
+    print "\n"
+
+def get_accuracy(original_rankings, predicted_rankings, label_type, title):
+    total_label_type=0
+    total_predicted_label_type=0
+    for (review, o_ranking) in original_rankings.items():
+        if int(o_ranking)==label_type:
+            total_label_type+=1
+            p_ranking=predicted_rankings[review]
+            if int(p_ranking)==int(o_ranking):
+                total_predicted_label_type+=1
+    
+    accuracy=total_predicted_label_type/total_label_type
+    print title
+    print "TOTAL CORRECT:", total_predicted_label_type, "correct out of", total_label_type
+    print "Accuracy = {0}%".format(accuracy*100)
+    print "\n"
+    
+
+def evaluation_summary(original_rankings, predicted_rankings, classification_base, review_set):
+    get_accuracy_overall(original_rankings, predicted_rankings)
+    get_accuracy(original_rankings, predicted_rankings, 2, "POSITIVE REVIEWS:")
+    get_accuracy(original_rankings, predicted_rankings, 1, "AVERAGE REVIEWS:")
+    get_accuracy(original_rankings, predicted_rankings, 0, "NEGATIVE REVIEWS:")
+   
+def lexicon_based_unigrams(lines, review_list, original_rankings, review_set):
+    ### Count all occurrences of positive and negative words
+    ### A dictionary is created where each key is the review and each value is another dictionary
+    ### The internal dictionary keeps track of the counts for negative and positive words in each review
+    ### Each review is tokenized and each token is checked for in the list of positive_words and negative_words
+    
+    
+    
+    """ ********************************** ENTER POSITIVE WORDS HERE ****************************************** """
+    
+    positive_words=["good", "amazing", "outstanding", "fantastic", "always", "perfect",
+                    "terrific", "best", "masterpiece", "wow", "classic", "spectacular", "great",
+                    "powerful", "influential", "original", "breathtaking", "mesmerizing", "funny",
+                    "fun", "oscar", "brilliant", "like", "liked", "love", "loved"]
+    
+    """ ********************************** ENTER POSITIVE WORDS HERE ****************************************** """
+    
+    negative_words=["bad", "sucks", "can't", "worst", "lame", "terrible", "hated", "hate",
+                    "horrible", "ill", "ewww", "shame", "cliche", "stupid"]
+    
+    
+    
+    
+
+    ### Get counts of positive in negative reviews in each review
+    review2counts={}
+    for review in review_list:
+        review2counts[review]={"positive":0, "negative":0}
+        tokenized_review=review.split(" ")
+        for token in tokenized_review:
+            if token in positive_words:
+                review2counts[review]["positive"]+=1
+            if token in negative_words:
+                review2counts[review]["negative"]+=1
+    ### Assigning Ratings:
+    ### The counts for positive and negative words are compared
+    ### A dictionary of predicted reviews is created in the format of {review: predicted_ranking}
+    ### If the review has a higher number of positive words, it is assigned the value, "2"
+    ### If the review has a higher number of negative words, it is assigned the value, "0"
+    ### If the review has an equal number of positive negative words, it is assigned the value of "1"
+    ### Also if the number of positive and negative words are similar within 2 counts, "1" is assigned
+    predicted_rankings={}
+    for (review, count_dict) in review2counts.items():
+        positive_count=count_dict["positive"]
+        negative_count=count_dict["negative"]
+        ranking=1
+        if positive_count>negative_count+1:
+            ranking=2
+        if negative_count>positive_count+1:
+            ranking=0
+        predicted_rankings[review]=ranking
+    ### Accuracy, Precision, Recall, and F-Score:
+    ### Compares original rankings and predicted rankings
+    ### Evaluation function prints accuaracy, precision, recall, and f-scores
+    evaluation_summary(original_rankings, predicted_rankings, "LEXICON-BASED", review_set)
+
+def main():
+    ################### Preprocessing ###########################   
+    training_lines=open("/sentiment/project2_train.txt", "r").readlines()      # open files
+    dev_lines=open("/sentiment/project2_development.txt", "r").readlines()
+    test_lines=open("/sentiment/project2_test.txt", "r").readlines()
+    reviews_train=create_list(training_lines)                       # create list of reviews without label
+    review2rank_train=create_dictionary(training_lines)             # create a dictionary of reviews with form {review:rank}
+    ################### Lexicon based ###################
+    lexicon_based_unigrams(training_lines, reviews_train, review2rank_train, "Training Set")
+      
+main()
+
+
+</textarea><br /> 
+<button type="button" onclick="runit()">Run</button> 
+</form> 
+<pre id="output" ></pre> 
+If you want turtle graphics include a canvas
+<div id="mycanvas"></div> 
+ 
+</body>
+</html> -->
+{% endblock demonstration %}
+
+{% block demo_scripts %}
+
+  
+{% endblock demo_scripts %}

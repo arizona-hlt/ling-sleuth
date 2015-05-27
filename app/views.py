@@ -112,6 +112,24 @@ def cases():
     return render_template('cases.html',
                            title='Cases')
 
+@app.route('/activity')
+def activity():
+    if current_user.is_anonymous() == True:
+        return not_logged_in(NameError)
+
+    user = User.query.filter_by(username=current_user.username).first()
+
+    user_permissions = user.user_rank.permissions + user.level.permissions
+    modules = Module.query.order_by(Module.permissions)
+    return render_template('activity.html',
+                           title='Projects',
+                           user=user,
+                           user_permissions=user_permissions,
+                           modules=modules)
+
+
+
+
 @app.route('/learn/<module>', methods=['GET', 'POST'])
 def modules(module):
     quiz = quiz_dict[module]
@@ -132,9 +150,9 @@ def modules(module):
             user_score -= quiz.score.incorrect[error]
         # calculate their percentage to compare against the required passing threshold
         user_perc = float(user_score) / float(quiz.score.quiz_points)
-        flash('Nice work!')
 
         if user_perc >= quiz.score.passing:
+            flash('Nice work!')
             # delete below line - currently used to reset user's xp to lowest level, 
             # prior to 'upgrade'; this is in place while testing
             current_user.xp = 0x001
@@ -191,6 +209,16 @@ def modules(module):
                             title=module.title(),
                             number=module_list.number,
                             form=quiz)#quiz_form)
+
+
+@app.route('/learn/<project>')
+def coding(project):
+    return render_template('{0}.html'.format(project),
+                           title='{0}'.format(project))
+                           # user=user,
+                           # user_permissions=user_permissions,
+                           # modules=modules)
+
 
 @app.route('/quiz_results')
 def quiz_submission():

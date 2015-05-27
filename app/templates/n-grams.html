@@ -4,20 +4,26 @@
 {% block module_intro %}
 <h2> What are {{title}}? </h2>
 
-<p></p>
+<p><i>N-grams</i>, as hinted in the last module on frequency, are sequences of characters, words, or some other unit.  The <i>N-</i> in n-grams refers to the number of units in the sequence.  For example, a 4-gram is a sequence of four units. N-grams with less than 4 units are referred to as <i>uni-grams</i> (one unit), <i>bi-grams</i> (two units), and <i>tri-grams</i> (three units).  N-grams larger than 4 simply replace the <i>N</i> with the number (for example, 10-gram = a ten-unit sequence.</p>
+
+<p>I use the word <i>unit</i> because n-grams can be used in a variety of tasks.  A unit could be a single character (remember from the last module, a character is a single letter or symbol), a single word, a single sound (in Speech Tech), or even a single sentence.  For example, the sentence "I have two dogs", is a sentence <i>unigram</i> (one unit), a word <i>4-gram</i>, and a character <i>15-gram</i> (if you count spaces as characters)</p>
 
 <h2> How are {{title}} used? </h2>
 
-<p></p>
+<p>You may have figured out that a word unigram is nothing more than a single word.  Recall from the Sentiment Analysis activity that single words, unigrams, were used to determine positve and negative movie reviews.  Also recall that there were limitations with using word unigrams for this task; namely, that while a unigram can capture the word "good", it cannot capture the phrase "not good", which would be important to determine sentiment.  This is where <i>higher order</i> n-grams come in.</p>
+
+<p>Bigrams (2 units) for example, would allow a user to capture the sentiment in the phrase "not good".  A trigram model, however, would be needed to capture the sentiment from the phrase "not very good" (a bigram would capture only "very good", which is quite a different sentiment).  With these in mind, at first it seems like a good idea to always increase the <i>order</i> of the n-gram (that is, make the <i>N</i> a larger number).  However, making the <i>N</i> larger also <i>decreases</i> the frequency of the unit.</p>
+
+<p>For example, the unigram "the" is more frequent than the bigram "the dog", which is more frequent than the trigram "the dog can" which is more frequent than the 4-gram "the dog can run" which is more frequent... you get the picture.</p>
 
 {% endblock module_intro %}
 
 {% block demonstration %}
 <h2> Demonstration </h2>
-Character bigrams for the word "noodle":
+Identify the character bigrams in the word "computational":
 <div id='collapse-me', class='accordion-body collapse'>
 <br>
-<samp>no oo od dl le</samp>
+<samp>co om mp pu ut ta at ti io on na al</samp>
 </div>
 
 <br><button type="button" class="btn-info", id="collapser">peek <i class="fa fa-arrow-up"></i></button>

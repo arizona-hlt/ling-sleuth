@@ -51,6 +51,11 @@ class CorrectAnswer(object):
             form.score.incorrect[self.question_id] = self.question_points
 
 
+class Frequency(Form):
+
+    quiz='frequency'
+    score = Score(quiz)
+
 # Must manually create a physical class; inherits from the Form metaclass
 class Ngrams(Form):
 
@@ -110,7 +115,7 @@ class CreateForm():
 
 # referenced in views.py, enabling it to access the quiz class based on the module name
 # We will need to change this when / if we have multiple quizzes per module.
-quiz_dict = {'n-grams':Ngrams,u'part of speech':PartOfSpeech}
+quiz_dict = {'n-grams':Ngrams,u'part of speech':PartOfSpeech,u'frequency':Frequency}
 
 
 

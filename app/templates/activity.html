@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %} Modules {% endblock title %}
+{% block title %} Activities {% endblock title %}
 
 {% block styles -%}
 {{ super() }}
@@ -18,7 +18,8 @@
 
 {% if modules %}
 	{% for m in modules %}
-		{% if m.permissions < user_permissions %} <!-- and m.skill == M %} -->
+		<li>{{m.mod_name}}</li>
+		{% if m.permissions < user_permissions and m.mod_name == A %} <!--if m.permissions < user_permissions and -->
 			<li> <a href="{{url_for('modules', module = m.module)}}"> {{ m.module }} </a></li>
 		<!-- % else %} 
 			<li> None </li> -->
@@ -31,7 +32,7 @@
 
 {% if modules %}
 	{% for m in modules %}
-		{% if m.permissions == user_permissions %} <!-- and m.skill == M %} -->
+		{% if m.permissions == user_permissions and m.mod_name == A %}
 			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
 		{% endif %}
 	{% endfor %}
@@ -42,7 +43,7 @@
 
 {% if modules %}
 	{% for m in modules %}
-		{% if m.permissions > user_permissions %} <!-- and m.skill == M%}-->
+		{% if m.permissions > user_permissions and m.mod_name == A %}
 			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
 		<!-- % else %}
 			<li> None </li> -->

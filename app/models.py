@@ -195,6 +195,7 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
     description = db.Column('description',db.Text,index=True,unique=True)
     #this is the "skill" obtained by completing the module.  This would go on the skills page.
     skill = db.Column('skill',db.Text,index=True,unique=True)
+    mod_type = db.Column('mod_type',db.String(3),index=True)
     xp = db.Column('xp',db.Integer)
     #would this be a many-to-one?
     # case = db.relationship('Case',backref='module',lazy='dynamic')
@@ -205,7 +206,7 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
 
 
     @staticmethod
-    def add_module(module,number=None,user_rank=None,level=None,description=None,skill=None,xp=None):
+    def add_module(module,number=None,user_rank=None,level=None,description=None,skill=None,xp=None,mod_type=None):
         mod_name = Module.query.filter_by(module=module).first()
         if mod_name is None:
             mod_name = Module(module=module)
@@ -223,6 +224,8 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
             mod_name.skill = skill
         if xp:
             mod_name.xp = xp
+        if mod_type:
+            mod_name.mod_type = mod_type
         db.session.add(mod_name)
         db.session.commit()
 
@@ -241,9 +244,10 @@ class Module(db.Model):  #holds dict, where modules are keys, val=list the lengt
             description = line[4]           if line[4] else None
             skill       = line[5]           if line[5] else None
             xp          = int(line[6],0)    if line[6] else None
+            mod_type    = line[7]           if line[7] else None
 
             Module.add_module(module,number=number,user_rank=user_rank,level=level,
-                            description=description,skill=skill,xp=xp)
+                            description=description,skill=skill,xp=xp,mod_type=mod_type)
 
 
 

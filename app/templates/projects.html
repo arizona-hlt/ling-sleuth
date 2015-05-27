@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles -%}
+{{ super() }}
+<link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
+{%- endblock styles %}
+
+{% block page_content %}
+
+{% block project_title %}<h1>{{title}}</h1>{% endblock project_title %}
+<hr>
+
+{% block project_intro %}
+<h2> What's a ___ ? </h2>
+
+<p></p>
+
+<h2> How are ___ used? </h2>
+
+<p> More text </p>
+
+{% endblock project_intro %}
+
+<hr>
+
+{% block demonstration %}
+<!-- Interactive demo goes here -->
+
+{% endblock demonstration %}
+
+
+{% block demo_scripts %}
+<!-- Javascript goes here -->
+{% endblock demo_scripts %}
+
+{% endblock page_content %}
