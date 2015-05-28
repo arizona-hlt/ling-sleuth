@@ -18,7 +18,7 @@
 
 {% if modules %}
 	{% for m in modules %}
-		{% if m.permissions < user_permissions %} <!-- and m.skill == M %} -->
+		{% if m.permissions < user_permissions and m.mod_type == 'M' %} <!-- and m.skill == M %} -->
 			<li> <a href="{{url_for('modules', module = m.module)}}"> {{ m.module }} </a></li>
 		<!-- % else %} 
 			<li> None </li> -->
@@ -31,7 +31,7 @@
 
 {% if modules %}
 	{% for m in modules %}
-		{% if m.permissions == user_permissions %} <!-- and m.skill == M %} -->
+		{% if m.permissions == user_permissions and m.mod_type == 'M' %} <!-- and m.skill == M %} -->
 			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
 		{% endif %}
 	{% endfor %}
@@ -42,7 +42,7 @@
 
 {% if modules %}
 	{% for m in modules %}
-		{% if m.permissions > user_permissions %} <!-- and m.skill == M%}-->
+		{% if m.permissions > user_permissions and m.mod_type == 'M' %} <!-- and m.skill == M%}-->
 			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
 		<!-- % else %}
 			<li> None </li> -->

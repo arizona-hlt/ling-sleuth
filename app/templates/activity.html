@@ -10,16 +10,15 @@
 
 {% block page_content %}
 
-<h1>Modules</h1>
+<h1>Activities</h1>
 
 <p>Here is where you you can gain knowledge to aquire more skills that will help you with your case!</p>
 
-<h2> Completed Modules </h2>
+<h2> Completed Activities </h2>
 
 {% if modules %}
 	{% for m in modules %}
-		<li>{{m.mod_name}}</li>
-		{% if m.permissions < user_permissions and m.mod_name == A %} <!--if m.permissions < user_permissions and -->
+		{% if m.permissions < user_permissions and m.mod_type == 'A' %} <!--if m.permissions < user_permissions and -->
 			<li> <a href="{{url_for('modules', module = m.module)}}"> {{ m.module }} </a></li>
 		<!-- % else %} 
 			<li> None </li> -->
@@ -28,22 +27,22 @@
 {% endif %}
 
 
-<h2> Active Modules </h2>
+<h2> Active Activities </h2>
 
 {% if modules %}
 	{% for m in modules %}
-		{% if m.permissions == user_permissions and m.mod_name == A %}
+		{% if m.permissions == user_permissions and m.mod_name == 'A' %}
 			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
 		{% endif %}
 	{% endfor %}
 {% endif %}
 
-<h2> Locked Modules </h2>
+<h2> Locked Activities </h2>
 
 
 {% if modules %}
 	{% for m in modules %}
-		{% if m.permissions > user_permissions and m.mod_name == A %}
+		{% if m.permissions > user_permissions and m.mod_name == 'A' %}
 			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
 		<!-- % else %}
 			<li> None </li> -->
