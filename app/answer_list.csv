@@ -5,12 +5,12 @@ frequency	frequency	3	five|5	1	3
 frequency	frequency	4		1	4
 frequency	frequency	5		1	5
 n-grams	n-grams	6	trigram.?	1	6
-n-grams	n-grams	7	ten|10	1	7
+n-grams	n-grams	7	sixty|60	1	7
 n-grams	n-grams	8	seven|7	1	8
-n-grams	n-grams	9		1	9
-n-grams	n-grams	10		1	10
+n-grams	n-grams	9	less	1	9
+n-grams	n-grams	10	true|True	1	10
 part of speech	part of speech	11	noun phrase	1	11
 part of speech	part of speech	12	grammatical category	1	12
-part of speech	part of speech	13		1	13
-part of speech	part of speech	14		1	14
+part of speech	part of speech	13	adverb	1	13
+part of speech	part of speech	14	DT NN VB	1	14
 part of speech	part of speech	15		1	15

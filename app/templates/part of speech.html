@@ -4,20 +4,26 @@
 {% block module_intro %}
 <h2> The {{title}} feature: What is it? </h2>
 
-<p>A <i>part of speech</i> is what is commonly referred to as a <i>grammatical category</i>.  You have probably heard of many of these, and may have been introduced to some of them during your syntax day at this camp.  Some of the more common parts of speech include:</p>
+<p>A <i>part of speech</i> is what is commonly referred to as a <i>grammatical category</i>.  You have probably heard of many of these, and may have been introduced to some of them during your syntax day at this camp.  Some of the more common parts of speech include (followed by their abbreviations):</p>
 
-<li>Common noun (NN)</li>
-<li>Present tense verb (VB)</li>
-<li>Adjective (JJ)</li>
+<li>Singular common noun (NN)</li>
 <li>Determiner (DT)</li>
+<li>Adjective (JJ)</li>
+<li>Present tense verb (VB)</li>
 <li>Adverb (RB)</li>
 <li>Modal (MD)</li>
 
-<p>Each of these deserves a little explanation.</p>
+<p>There are a number of others, but these will be the ones this module will focus on.  Each of these deserves a little explanation.  A noun, as you have probably learned, is generally defined as a person, place, or thing.  A <i>common</i> noun, for example, would be "dog", as opposed to a <i>proper</i> noun, which would be Fido.  You might think of a common noun as a "generic" noun - not a name.  A <i>singular</i> noun is likely self explanatory - "dog" is singular, "dogs" is plural. Nouns and <i>determiners</i> go hand in hand.  Determiners are the words that precede nouns that are difficult to define: "the", "these", "that", "some", "a", etc.  In English, these are words used to "introduce" a noun, and often give some information about it.  For example, "these", generally refers to a specific ("these", not "those") group (plural) of nouns, whereas "a" refers to a singular, non-specific item.  Adjectives also go hand in hand with nouns, and like determiners (as you likely already know) these words <i>describe</i> nouns, though in a more specific way than determiners.  They give information on the specific characteristic of the nouns.  Oftentimes, this takes the form of describing the color, shape, size, etc of an object ("big, blue, round"), the temperament of a person ("happy"), or any other number of words used to describe a noun.</p>
 
-<h2> Understanding the {{title}} feature and how it's used. </h2>
+<p>Along a slightly different train, we have verbs, which are the "action" words of a sentence.  These, like nouns, are fairly self explanatory, and generally are anything that a noun can do, for example, run, jump, walk, sit, etc.  <i>Adverbs</i> are the "adjectives" of verbs, and describe the way an action is performed.  Not always, but oftentimes these words end in "-ly", such as <i>quickly</i> jump, or <i>slowly</i> walk.  <i>Modals</i> might be sightly less familiar than some of the other terms used so far.  These oftentimes seem like verbs, but always occur with another verb.  Generally, these are used to describe someones ability or willingness to perform a "verb" action.  The words "can", "should", and "might", among others, are all "modals".  These often indicate politeness in English, but can be used in many ways.</p>
 
-<p></p>
+<h2> Understanding the {{title}} feature and how it's used.</h2>
+
+<p>So now that we know a good bit about some <i>parts of speech</i>, what are they useful for?  Quite a bit actually!  Parts of speech are used in a great number of computational linguistic tasks.  For example, in our Sentiment Analysis task, it may the the case that negative reviewers tend to use <i>modals</i> more, in an effort to present their negative opinion in a more "polite" manner.  It also could be the case that positive reviewers tend to use more <i>adjectives</i> altogether in their review.</p>
+
+<p>For authorship detection, it is the case that different writers have different writing styles, and often it is the case that these styles will follow part of speech patterns.  One writer will use different parts of speech or parts of speech sequences from another writer.  <i>Sequences</i> - this word should be ringing a bell.  Just as you can have one, two, three, or <i>N</i> word sequences, you can put the parts of speech associated with the word sequences into sequences themselves.  Yes, this is returning to n-grams!   You can have a word bigram "the dog", but you can also have a part of speech bigram "DT NN" (determiner - common noun).</p>
+
+<p>In fact part of speech n-grams are some of the most widely used features in computational linguistics - even more than word n-grams.  Why would this be - aren't the words themselves more descriptive than their parts of speech?  Yes, however, this runs into the same problem discussed earlier in the previous module: 10-grams, or even 20-grams are more descriptive than bigrams, but a specific bigram is much more frequent than a specific 20-gram (All the way back to frequency!).  Similarly, a word n-gram, while more descriptive, is much more infrequent than its part of speech n-gram. For example, "the dog sleeps" is more descriptive, but much less freqruent than "DT NN VB" (arguably one of the most frequent part of speech trigrams).  There is a trade off that must be weighed - is the loss of descriptiveness worth gaining a more useful frequency measure?  Many times part of speech n-grams are used in conjunction with word n-grams, but it isn't uncommon that they are used in place of word n-grams themselves.</p>
 
 {% endblock module_intro %}
 
