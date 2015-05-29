@@ -4,7 +4,10 @@
 {% block project_intro %}
 <h2>Text to Speech Activity</h2>
 
-<p>Add re-write rules in the appropriate section - this is marked by **** asterisks.</p>
+<p>In this task your job is to convert English <i>orthography</i> (letters) to a sound-like representation.  The specific symbols and their equivalents should be displayed on the projector, and in your list of words, you should also see their <i>phonetic</i> (sound) correspondences.  Make sure you have your list of words copied, erase what is currently in the cmu.txt tab, and paste your list where the previous list was. </p>
+
+<p>You will add re-write rules in the appropriate section - this is marked by **** asterisks.  Be sure to have one rule per line; the first column has the pattern you want to match in the word, and the second column has what you want to change that pattern to.  Be certain to separate the columns with a TAB, otherwise things won't work quite right.  Make sure to write your list in another text document, as if your browser refreshes or crashes, your rules will be reset.</p>
+
 {% endblock project_intro %}
 
 {% block demonstration %}
@@ -12,6 +15,16 @@
 {% endblock demonstration %}
 
 {% block demo_scripts %}
-
+<li><a href="{{url_for( 'tts', data = 'cmu_group_0' )}}"> Group 1 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_1' )}}"> Group 2 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_2' )}}"> Group 3 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_3' )}}"> Group 4 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_4' )}}"> Group 5 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_5' )}}"> Group 6 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_6' )}}"> Group 7 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_7' )}}"> Group 8 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_8' )}}"> Group 9 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_9' )}}"> Group 10 </a></li>
+<li><a href="{{url_for( 'tts', data = 'cmu_group_10' )}}"> Group 11 </a></li>
   
 {% endblock demo_scripts %}

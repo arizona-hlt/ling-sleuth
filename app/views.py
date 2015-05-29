@@ -113,17 +113,16 @@ def cases():
                            title='Cases')
 
 
-# @app.route('/activity/<project>')
-# def projects(project):
-#     return render_template('projects.html',
-#                             title='Projects')
-@app.route('/activity/<project>', methods=['GET', 'POST'])
+@app.route('/activity/text to spech/<data>')
+def tts(data):
+    return render_template('{}.html'.format(data),
+                            title='Data File')
+
+@app.route('/activity/<project>')
 def projects(project):
     return render_template('{0}.html'.format(project),
                            title='{0}'.format(project))
-                           # user=user,
-                           # user_permissions=user_permissions,
-                           # modules=modules)
+
 
 @app.route('/activity')
 def activity():
