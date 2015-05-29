@@ -20,3 +20,7 @@ dt {
 dd {
     width: 65%;
 }
+
+h1.capitalize {
+    text-transform: capitalize;
+}

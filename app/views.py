@@ -112,6 +112,19 @@ def cases():
     return render_template('cases.html',
                            title='Cases')
 
+
+# @app.route('/activity/<project>')
+# def projects(project):
+#     return render_template('projects.html',
+#                             title='Projects')
+@app.route('/activity/<project>', methods=['GET', 'POST'])
+def projects(project):
+    return render_template('{0}.html'.format(project),
+                           title='{0}'.format(project))
+                           # user=user,
+                           # user_permissions=user_permissions,
+                           # modules=modules)
+
 @app.route('/activity')
 def activity():
     if current_user.is_anonymous() == True:
@@ -126,8 +139,6 @@ def activity():
                            user=user,
                            user_permissions=user_permissions,
                            modules=modules)
-
-
 
 
 @app.route('/learn/<module>', methods=['GET', 'POST'])
@@ -209,15 +220,6 @@ def modules(module):
                             title=module.title(),
                             number=module_list.number,
                             form=quiz)#quiz_form)
-
-
-@app.route('/learn/<project>')
-def coding(project):
-    return render_template('{0}.html'.format(project),
-                           title='{0}'.format(project))
-                           # user=user,
-                           # user_permissions=user_permissions,
-                           # modules=modules)
 
 
 @app.route('/quiz_results')

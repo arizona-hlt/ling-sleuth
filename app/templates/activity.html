@@ -19,7 +19,7 @@
 {% if modules %}
 	{% for m in modules %}
 		{% if m.permissions < user_permissions and m.mod_type == 'A' %} <!--if m.permissions < user_permissions and -->
-			<li> <a href="{{url_for('modules', module = m.module)}}"> {{ m.module }} </a></li>
+			<li> <a href="{{url_for('projects', project = m.module)}}"> {{ m.module }} </a></li>
 		<!-- % else %} 
 			<li> None </li> -->
 		{% endif %}
@@ -32,7 +32,7 @@
 {% if modules %}
 	{% for m in modules %}
 		{% if m.permissions == user_permissions and m.mod_name == 'A' %}
-			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
+			<li> <a href="{{ url_for( 'projects', project = m.module ) }}"> {{ m.module }} </a></li>
 		{% endif %}
 	{% endfor %}
 {% endif %}
@@ -43,7 +43,7 @@
 {% if modules %}
 	{% for m in modules %}
 		{% if m.permissions > user_permissions and m.mod_name == 'A' %}
-			<li> <a href="{{ url_for( 'modules', module = m.module ) }}"> {{ m.module }} </a></li>
+			<li> <a href="{{ url_for( 'projects', project = m.module ) }}"> {{ m.module }} </a></li>
 		<!-- % else %}
 			<li> None </li> -->
 		{% endif %}
