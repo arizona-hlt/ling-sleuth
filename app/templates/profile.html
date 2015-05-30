@@ -11,20 +11,24 @@
 {% block page_content -%}
 
 
-<h1>{{current_user.username }}'s Profile</h1>
+<h1>{{ current_user.username }}'s Profile</h1>
 
 
 <dl>
     <dt>Username:</dt>
     <dd>{{current_user.username}}</dd>
     <dt>Rank:</dt>
-    <dd>pooShoe</dd>
+    <dd>{{current_user.user_rank}}</dd>
+    <dt>XP:</dt>
+    <dd>{{current_user.xp}}</dd>
+    <dt>Level:</dt>
+    <dd>{{current_user.level}}</dd>
 	<dt>Next Rank:</dt>
-	<dd>a-poo-rentice</dd>
-    <dt>Latest Skill:</dt>
-    <dd>poo-Merge</dd>
+	<dd>{{next_rank}}</dd>
+    <!-- <dt>Latest Skill:</dt>
+    <dd>????</dd>
     <dt>Next Skill:</dt>
-    <dd>poo-Escape-Hatch</dd>
+    <dd>????</dd> -->
 </dl>
 
 {%- endblock page_content %}

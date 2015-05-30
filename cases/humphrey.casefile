@@ -1,0 +1,14 @@
+Humphrey
+
+#	MODULE
+Ngrams	Gumshoe	Level-1	This is a module about n-grams
+POS	Assistant_Detective Level-1	This is a module about parts of speech
+
+#	SKILL
+Ngram Detector	Ngram_quiz
+
+#	QUIZ
+Ngram_quiz *permissions*	This is a quiz about Ngrams	Ngram Detector
+
+# 	QUESTION
+Ngrams	What is an Ngram?	*points* M-C	A sequence of words or charactors of N length	A kind of cracker	A kind of telemarketer call	A sequence of just characters

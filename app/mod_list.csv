@@ -1,0 +1,6 @@
+Module	Number	User_Rank	Level	Description	Skill	XP	Module_Type
+sentiment analysis	1	Gumshoe	Level-1	Sentiment Analysis coding activity		0x008	A
+text to speech	2	Gumshoe	Level-9	Text to Speech coding activity		0x009	A
+frequency	3	Assistant Detective	Level-2	Frequency use in Computational Linguistics		0x005	M
+n-grams	4	Assistant Detective	Level-7	Introduction to N-grams!		0x005	M
+part of speech	5	Assistant Detective	Level-12	Introduction to Parts of Speech!		0x005	M

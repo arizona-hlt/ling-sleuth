@@ -1,6 +1,7 @@
 # Python
 *.pyc
 *.pyo
+*.Python
 
 *~
 
@@ -32,6 +33,8 @@ main.brf
 # Packages
 *.egg
 *.egg-info
+*.json
+python2.7
 dist
 build
 eggs
@@ -44,9 +47,16 @@ develop-eggs
 lib
 lib64
 
-#texpad
+# texpad
 .tpbuild
 
-#Flask
+# Flask
 secret.py
 app.db
+migrations/
+
+# Ignore virtualenvironment contents
+venv
+
+# keep any .gitkeep
+!/*.gitkeep

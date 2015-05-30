@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles -%}
+{{ super() }}
+<link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
+{%- endblock styles %}
+
+{% block page_content %}
+
+{% block module_title %}<h1> Module {{number}}: {{title}}</h1>{% endblock module_title %}
+<hr>
+
+{% block module_intro %}
+<h2> What's a ___ ? </h2>
+
+<p></p>
+
+<h2> How are ___ used? </h2>
+
+<p> More text </p>
+
+{% endblock module_intro %}
+
+<hr>
+
+{% block demonstration %}
+<!-- Interactive demo goes here -->
+
+{% endblock demonstration %}
+
+<hr>
+<!-- The module's quiz! -->
+{% block quiz %}
+<h2>{{title}} Quiz</h2>
+{% block quiz_description %}
+<h4><i>Time to test what you've learned about {{title.lower()}}!  Can you answer the questions below, {{current_user.user_rank}}?</i></h4>
+  <br>
+{% endblock quiz_description %}
+{{ wtf.quick_form(form, form_type="vertical", horizontal_columns=('sm', 2, 4)) }}
+{% endblock quiz %}
+
+
+{% block demo_scripts %}
+<!-- Javascript goes here -->
+{% endblock demo_scripts %}
+
+{% endblock page_content %}

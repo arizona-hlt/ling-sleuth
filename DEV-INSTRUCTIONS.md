@@ -28,13 +28,31 @@ We're using `Flask-Migrate` to handle changes to the database models.
 
 This will create a database
 
-### Handling the initial migration
+### Handling migrations
 
 `python manage.py db migrate`
 
-### Handling subsequent migrations
+which creates the migration script, and
 
 `python manage.py db upgrade`
+
+which updates the database with the new migration script.
+
+### Add modules, quizzes, questions, and answers
+
+Specify a module/quiz/question/answer to be added to the database and its fields by adding a line to [mod|quiz|question|answer]_list.csv, in the /app directory. Any fields you do not currently wish to add information for, simply tab to the next field.
+
+To add these to the database, run
+
+`python manage.py refresh`
+
+### Initialize user ranks, levels, modules, quizzes, questions, and answers
+
+If the database needs to be recreated, and these values reinitialized, run
+
+`python manage.py reboot`
+
+which will automatically load in the specified ranks, levels, and modules.
 
 ### Learn more
 

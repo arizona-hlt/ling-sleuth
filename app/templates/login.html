@@ -1,8 +1,22 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles -%}
+{{ super() }}
+<link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
+{%- endblock styles %}
+
 
 {% block content %}
+
 <div class="container">
+<h2>Normal User Login</h2>
+	
 <a href="login/google"><img src="https://developers.google.com/identity/images/sign-in-with-google.png"></a>
 
+{% block special_login %}
+<h2>Special User Login</h2>
+{{ wtf.quick_form(form, form_type="vertical", horizontal_columns=('sm', 2, 4)) }}
+{% endblock special_login %}
 </div>
 {% endblock content %}
