@@ -48,7 +48,7 @@
                     <ul class="dropdown-menu" role="menu">
                       {% if g.user.is_authenticated()%}
                         <li><a href="{{ url_for('profile') }}"><span class="fa fa-user"> Profile</span></a></li>
-                        <li><a href="{{ url_for('knowledge') }}"><span class="fa fa-lightbulb-o"> Skillz</span></a></li>
+                        <!--<li><a href="{{ url_for('knowledge') }}"><span class="fa fa-lightbulb-o"> Skillz</span></a></li>-->
                         <li><a href="{{ url_for('logout') }}"><span class="fa fa-sign-out"> Log out</span></a></li>
                       {% endif %}
                       {% if not g.user.is_authenticated()%}

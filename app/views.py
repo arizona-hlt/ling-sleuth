@@ -82,6 +82,10 @@ def page_not_found(error):
 def not_logged_in(error):
     return 'You must be logged in to access this page', 404
 
+@app.errorhandler(404)
+def insufficient_xp(error):
+    return 'You must have more xp to access this content!', 404
+
 #@app.errorhandler(DatabaseError)
 #def special_exception_handler(error):
 #    return 'Database connection failed', 500
@@ -120,6 +124,29 @@ def tts(data):
 
 @app.route('/activity/<project>')
 def projects(project):
+    req_xp = Module.query.filter_by(module=project).first().permissions
+    if current_user.xp < req_xp:
+        return insufficient_xp(NameError)
+    if current_user.xp == req_xp:
+        added_xp = Module.query.filter_by(module=project).first().xp
+        # flash('Nice work! +{0} XP'.format(added_xp))
+        # set xp gain
+        new_permissions = current_user.xp + added_xp
+        current_user.xp = new_permissions
+
+        # find the next rank
+        next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
+
+        # work-around to check if the next rank was actually obtained
+        if current_user.xp >= next_rank.permissions:
+            current_user.user_rank = next_rank
+            current_user.level = Level.query.filter_by(permissions=(current_user.xp-next_rank.permissions)).first()
+        else:
+            current_user.level = Level.query.filter_by(permissions=(current_user.xp-(next_rank.permissions-0x010))).first()
+
+        db.session.add(current_user)
+        db.session.commit()
+
     return render_template('{0}.html'.format(project),
                            title='{0}'.format(project))
 
@@ -130,7 +157,14 @@ def activity():
         return not_logged_in(NameError)
 
     user = User.query.filter_by(username=current_user.username).first()
-
+    #uncomment if there is a need to reset permissions
+    # user.level = Level.query.filter_by(level="Level-1").first()
+    # user.user_rank = UserRank.query.filter_by(user_rank="Gumshoe").first()
+    # user.xp = 1
+    # db.session.add(user)
+    # db.session.commit()
+    print user.user_rank.permissions
+    print user.level.permissions
     user_permissions = user.user_rank.permissions + user.level.permissions
     modules = Module.query.order_by(Module.permissions)
     return render_template('activity.html',
@@ -142,6 +176,10 @@ def activity():
 
 @app.route('/learn/<module>', methods=['GET', 'POST'])
 def modules(module):
+    req_xp = Module.query.filter_by(module=module).first().permissions
+
+    if current_user.xp < req_xp:
+        return insufficient_xp(NameError)
     quiz = quiz_dict[module]
     # calls function in quizzes, which populates and instantiates the quiz class within the module
     cf = CreateForm(module)
@@ -150,9 +188,10 @@ def modules(module):
     quiz_object = Quiz.query.filter_by(quiz=quiz.score.quiz.quiz).first()
     # determines if enough XP has been earned in order to level up
     level_up = False
+
     # if submit AND no questions have been left blank
     if request.method == 'POST' and quiz.validate():
-        
+
         # calculate user's score by subtracting the points missed from the points total
         user_score = quiz.score.quiz_points
         for error in quiz.score.incorrect:
@@ -162,32 +201,42 @@ def modules(module):
         user_perc = float(user_score) / float(quiz.score.quiz_points)
 
         if user_perc >= quiz.score.passing:
-            flash('Nice work!')
+
             # delete below line - currently used to reset user's xp to lowest level, 
             # prior to 'upgrade'; this is in place while testing
-            current_user.xp = 0x001
+            # current_user.xp = 0x001
+            if current_user.xp == req_xp:
+                added_xp = Module.query.filter_by(module=module).first().xp
+                flash('Nice work! +{0} XP'.format(added_xp))
+                # set xp gain
+                new_permissions = current_user.xp + added_xp
+                current_user.xp = new_permissions
 
-            added_xp = Module.query.filter_by(module=module).first().xp
-            # set xp gain
-            new_permissions = current_user.xp + added_xp
-            current_user.xp = new_permissions
+                # find the next rank
+                next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
+                # work-around to check if the next rank was actually obtained
+                if current_user.xp >= next_rank.permissions:
+                    current_user.user_rank = next_rank
+                    current_user.level = Level.query.filter_by(permissions=(current_user.xp-next_rank.permissions)).first()
+                    level_up = True
+                    flash('Level up!')
+                else:
+                    current_user.level = Level.query.filter_by(permissions=(current_user.xp-(next_rank.permissions-0x010))).first()
 
-            # find the next rank
-            next_rank = UserRank.query.filter_by(permissions=(current_user.user_rank.permissions + 0x010)).first()
-            # work-around to check if the next rank was actually obtained
-            if current_user.xp >= next_rank.permissions:
-                current_user.user_rank = next_rank
-                level_up = True
+                # hack/ workaround - something better would be nice, but necessary to match 
+                # the next module's permissions EXACTLY
+                # subtract 1 from user's permissions to find the highest-permission module
+                # they are qualified to look at
+                permission_match = current_user.xp + 0x001
+                next_module = None
 
-            # hack/ workaround - something better would be nice, but necessary to match 
-            # the next module's permissions EXACTLY
-            # subtract 1 from user's permissions to find the highest-permission module
-            # they are qualified to look at
-            permission_match = current_user.xp + 0x001
-            next_module = None
-            while next_module == None:
-                permission_match -= 0x001
-                next_module = Module.query.filter_by(permissions=permission_match).first()
+                while next_module == None:
+                    permission_match -= 0x001
+                    next_module = Module.query.filter_by(permissions=permission_match).first()
+            else:
+                flash('Nice work!')
+                next_module = module
+
         # if the module was passed the next module is the same module.
         else:
             next_module = module
@@ -195,10 +244,9 @@ def modules(module):
         #save any changes to the current user's profile
         db.session.add(current_user)
         db.session.commit()
-        
+
         #render the quiz submission page with all the variables
         return render_template('quiz_results.html',
-                                # aced=False,
                                 level_up=level_up,
                                 next_module=next_module,
                                 quiz=quiz_object,
