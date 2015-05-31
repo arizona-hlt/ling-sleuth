@@ -1,0 +1,23 @@
+{% extends "projects.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block project_intro %}
+<h2>Sentiment Analysis Activity</h2>
+
+<p>You'll be working with a bit of <i>Python</i> computer code today - and no, not a snake.  Python is the name of a programming language, much like <i>C</i> or <i>Java</i>.  Most of the code is already in place, but you will need to customize the list of positive and negative words.  This code sorts movie reviews into groups of positive, negative, and average reviews.</p>
+
+<p>Add positive and negative words into the appropriate sections - these are marked by **** asterisks.  Be sure to surround your word with "" quotation marks, and separate words with commas.</p>
+
+<p>To test your list of words, click the "Run" button at the top of the widget, and the results will appear in the spot to the right.  If you want extra help creating your list of words, you can read through some of the example reviews under the "project2_train.txt" tab next to the "main.py" tab. Each line is a movie review, and the number at the beginning of the line indicates whether the movie review is positive (2), neutral (1), or negative (0).  You will want to keep your list of positive and negative words backed up in a text file, since they will be erased if you accidentally close the tab or navigate to a different page.</p>
+
+{% endblock project_intro %}
+
+{% block demonstration %}
+<iframe src="https://trinket.io/embed/python/81ea65aaeb" width="100%" height="600" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>
+
+{% endblock demonstration %}
+
+{% block demo_scripts %}
+
+  
+{% endblock demo_scripts %}

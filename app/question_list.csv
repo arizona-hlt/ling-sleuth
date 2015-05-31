@@ -1,5 +1,16 @@
 Module	Quiz	Question_Id	Question	Points	Question_Type
-n-grams	n-grams	1	What do you call an N-gram of three elements?	1	fitb
-n-grams	n-grams	2	How many character bigrams are in the word 'abracadabra'?	1	fitb
-n-grams	n-grams	3	How many DISTINCT character bigrams are in the word 'abracadabra'?	1	fitb
-part of speech	part of speech	4	What does NP stand for?	1	fitb
+frequency 	frequency	1	Frequency is not a feature itself. Type True or False	1	tf
+frequency	frequency	2	Frequency is only used with characters, words, and sentences. Type True or False	1	tf
+frequency	frequency	3	How many <i>word-final</i> periods are in the following paragraph: "There are other relationship types besides the one-to-many. The one-to-one relationship can be expressed as the one-to-many described earlier, but with the uselist option set to False within the db.relationship() definition so that the "many" side becomes a "one" side. The many-to-one relationship can also be expressed as a one-to-many if the tables are reversed, or it can be expressed with the foreign key and the db.relationship() definition both on the "many" side. The most complex relationship type, the many-to-many, requires an additional table called an association table. You will learn about many-to-many relationships in Chapter 12."	1	fitb
+frequency	frequency	4	Because all features can be counted, frequency is the only way to measure these features. Type True or False	1	tf
+frequency	frequency	5	Find the <i>average</i> number of letters per word in the following sentence (ignore punctuation and round down):<b> "If line statements are enabled by the application, it's possible to mark a line as a statement."	1	fitb
+n-grams	n-grams	6	What do you call an N-gram of three elements?	1	fitb
+n-grams	n-grams	7	How many word bigrams are in the following passage?: "A second problem is that even if we find a mechanism to get all the candidates listed, we must still assign violations. Again, the simplest interpretation of what this entails is writing in the asterisks in the tableau. Since there are an infinite number of rows, any of which could violate any constraint, the job of determining violations would never end."	1	fitb
+n-grams	n-grams	8	How many DISTINCT character bigrams are in the word 'abracadabra' (recall what "distinct" means from the previous module on frequency)?	1	fitb
+n-grams	n-grams	9	The larger the <i>n</i> in the n-gram the [less/more] frequent it is?	1	fitb
+n-grams	n-grams	10	Probability requires frequency to be calculated. Type True or False	1	tf
+part of speech	part of speech	11	What does NP stand for?	1	fitb
+part of speech	part of speech	12	A part of speech is more commonly called ____.	1	fitb	
+part of speech	part of speech	13	What is the part of speech with the abbreviation of "RB"?	1	fitb
+part of speech	part of speech	14	What is one of the arguably most frequent part of speech trigrams (use abbreviations)?	1	fitb
+part of speech	part of speech	15	A word is more frequent than its part of speech. Type True or False	1	fitb

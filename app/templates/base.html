@@ -37,6 +37,7 @@
               <li><a href="{{ url_for('index') }}"><span class="fa fa-user-secret"> Home</span></a></li>
               <li><a href="{{ url_for('cases') }}"><span class="fa fa-archive"> Cases</span></a></li>
               <li><a href="{{ url_for('learn') }}"><span class="fa fa-book"> Learn</span></a></li>
+              <li><a href="{{ url_for('activity') }}"><span class="fa fa-book"> Activity</span></a></li>
 			     </ul>
            <ul class="nav navbar-nav navbar-right">
 				          <li><a href="https://github.com/myedibleenso/ling-sleuth"><span class="fa fa-github"></span></a></li>
@@ -47,7 +48,7 @@
                     <ul class="dropdown-menu" role="menu">
                       {% if g.user.is_authenticated()%}
                         <li><a href="{{ url_for('profile') }}"><span class="fa fa-user"> Profile</span></a></li>
-                        <li><a href="{{ url_for('knowledge') }}"><span class="fa fa-lightbulb-o"> Skillz</span></a></li>
+                        <!--<li><a href="{{ url_for('knowledge') }}"><span class="fa fa-lightbulb-o"> Skillz</span></a></li>-->
                         <li><a href="{{ url_for('logout') }}"><span class="fa fa-sign-out"> Log out</span></a></li>
                       {% endif %}
                       {% if not g.user.is_authenticated()%}

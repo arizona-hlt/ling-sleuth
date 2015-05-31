@@ -4,20 +4,30 @@
 {% block module_intro %}
 <h2> What are {{title}}? </h2>
 
-<p></p>
+<p><i>N-grams</i>, as hinted in the last module on frequency, are sequences of characters, words, or some other unit.  The <i>N-</i> in n-grams refers to the number of units in the sequence.  For example, a 4-gram is a sequence of four units. N-grams with less than 4 units are referred to as <i>uni-grams</i> (one unit), <i>bi-grams</i> (two units), and <i>tri-grams</i> (three units).  N-grams larger than 4 simply replace the <i>N</i> with the number (for example, 10-gram = a ten-unit sequence.</p>
+
+<p>I use the word <i>unit</i> because n-grams can be used in a variety of tasks.  A unit could be a single character (remember from the last module, a character is a single letter or symbol), a single word, a single sound (in Speech Tech), or even a single sentence.  For example, the sentence "I have two dogs", is a sentence <i>unigram</i> (one unit), a word <i>4-gram</i>, and a character <i>15-gram</i> (if you count spaces as characters).</p>
 
 <h2> How are {{title}} used? </h2>
 
-<p></p>
+<p>You may have figured out that a word unigram is nothing more than a single word.  Recall from the Sentiment Analysis activity that single words, that is - unigrams, were used to determine positve and negative movie reviews.  Also recall that there were limitations with using word unigrams for this task; namely, that while a unigram can capture the word "good", it cannot capture the phrase "not good", which would be important to determine sentiment.  This is where <i>higher order</i> n-grams come in.</p>
+
+<p>Bigrams (2 units) for example, would allow a user to capture the sentiment in the phrase "not good".  A trigram (3 units) model, however, would be needed to capture the sentiment from the phrase "not very good" (a bigram would capture only "very good", which is quite a different sentiment).  With these in mind, at first it seems like a good idea to always increase the <i>order</i> of the n-gram (that is, make the <i>N</i> a larger number).  In this way, one can capture more words, and get a better idea of the intended meaning of the sentence. However, making the <i>N</i> larger also <i>decreases</i> the frequency of the unit.</p>
+
+<p>For example, the unigram "the" is more frequent than the bigram "the dog", which is more frequent than the trigram "the dog can" which is more frequent than the 4-gram "the dog can run" which is more frequent... you get the picture.  Why is this a problem?  For example, in sentiment analysis, if you had longer n-gram units, such as "I really thought I would like this movie, but it turned out to be bad." under negative n-grams, you would definitely correctly match the sentence to the sentiment. However, the odds of finding this exact phrase in a movie review is very, very unlikely.  In short, there are a TON of ways that reviewers can word their reviews, and it is impossible to try to come up with every possible sentence that someone may come up with.  How do we solve this problem?  We can use shorter n-grams that are more frequent, and incorporate other features to help us determine sentiment.</p>
+
+<p>Using very large and infrequent n-grams is also problematic for other areas of computational linguistics, and not just sentiment analysis.  Many of these areas use <i>frequency</i> to deterimine the <i>probability</i> of an n-gram, and having infrequent n-grams will not be helpful when calculating probability.  We won't discuss probability very much, but you can think of it as a kind of <i>normalized</i> frequency.  That means, while frequency is dependant on the length of a document (if a document is 5 pages long, it will have more punctuation than a document that is half a page long), probability uses frequency in a way that is not dependent on document length.  For example, you may want to find the probability of a bigram in documents written by Author 1, and compare that with the probability of the bigram in the test document.  If they are similar, then it may be the case that the author of the test document was written by Author 1.</p>
+
+<p>While we won't discuss probability in further depth, this is generally what is used when including n-grams as features in computational linguistics, including in your current task of authorship detection.</p>
 
 {% endblock module_intro %}
 
 {% block demonstration %}
 <h2> Demonstration </h2>
-Character bigrams for the word "noodle":
+Identify the character bigrams in the word "computational":
 <div id='collapse-me', class='accordion-body collapse'>
 <br>
-<samp>no oo od dl le</samp>
+<samp>co om mp pu ut ta at ti io on na al</samp>
 </div>
 
 <br><button type="button" class="btn-info", id="collapser">peek <i class="fa fa-arrow-up"></i></button>

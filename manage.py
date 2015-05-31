@@ -13,26 +13,27 @@ def make_shell_context():
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
-# # class Reboot():
-# 	def reboot():
-# 		print 'Rebooting...'
-# 		UserRank.initialize_ranks(UserRank)
-# 		Level.initialize_levels(Level)
-# 		Module.csv_upload()
-# 		Quiz.csv_upload()
-# 		QuestionLibrary.csv_upload()
-# 		AnswerLibrary.csv_upload()
-#		User.add_admin()
-# manager.add_command('reboot', Reboot())
+# to reset the database, minus users (refresh plus ranks and levels)
+@manager.command
+def reboot():
+	print 'Rebooting Database...'
+	UserRank.initialize_ranks(UserRank)
+	Level.initialize_levels(Level)
+	Module.csv_upload()
+	Quiz.csv_upload()
+	QuestionLibrary.csv_upload()
+	AnswerLibrary.csv_upload()
 
-# # class Refresh():
-# def refresh():
-# 	print 'Refreshing...'
-# 	Module.csv_upload()
-# 	Quiz.csv_upload()
-# 	QuestionLibrary.csv_upload()
-# 	AnswerLibrary.csv_upload()
-#	User.add_admin()
+
+# refresh the list of modules
+@manager.command
+def refresh():
+	print 'Refreshing Database...'
+	Module.csv_upload()
+	Quiz.csv_upload()
+	QuestionLibrary.csv_upload()
+	AnswerLibrary.csv_upload()
+	# User.add_admin()
 # manager.add_command('refresh', Refresh())
 
 if __name__ == '__main__':
