@@ -19,7 +19,7 @@
 
 <p>These merit some explanation.  What do I mean by <i>characters</i>?  Characters in computational linguistics refers to a letter, number or symbol.  Basically a single unit that you can type.  Why are these important?  Well, in short you can tell a lot from the kind of characters and the amount of characters that are used.  For example, you might be able to differentiate two authors by counting the number of characters in each word they write, and taking the average of it.  A person who is 20 will likely write words that are generally longer than a child who is 6.</p>
 
-
+{% block demonstration1 %}
 <h4> Test yourself! </h4>
 What is the total number of <i>vowels</i> in the following sentence: "She sell sea shells on the sea shore."
 <div id='collapse-me', class='accordion-body collapse'>
@@ -28,20 +28,22 @@ What is the total number of <i>vowels</i> in the following sentence: "She sell s
 </div>
 
 <br><button type="button" class="btn-info", id="collapser">peek <i class="fa fa-arrow-up"></i></button>
+{% endblock demonstration1 %}
 
-<h3></h3>
+<!-- <h3></h3> -->
 <p>Punctuation is a specific type of character.  The <i>frequency</i> of punctuation can also differentiate two authors.  It might be possible that one person is very keen on using exact and proper punctuation.  It is just as likely (if not moreso) that there is someone who is not.  This person may forget to place apostrophes in places when needed, or might put commas in places they aren't.</p>
 
-
+{% block demonstration2 %}
 <h4> Test yourself! </h4>
-<p>What is the <i>average</i> number of punctuation marks <i>per sentence</i>? (Use a calculator if you need, and remember the equation for calculating an average: total number (of punctuation), divided by the number of groups (number of sentences)):</p>
-<p>"Serve your customers fresh coffee with this single serving stainless steel Vietnamese style coffee press! This coffee press includes a built-in filter so you can brew to the ideal strength, tightening the press for a stronger beverage, and loosening it to take the edge off. Its convenient design fits in the top rim of mugs or cups to deliver a single serving of your most popular coffee or tea. For versatility, this coffee press can be used with hot coffee, Vietnamese iced coffee, loose leaf tea, and more. And thanks to its stainless steel structure, you can be sure this coffee press can stand up to the rigors of day-to-day use."</p>
+What is the <i>average</i> number of punctuation marks <i>per sentence</i>? (Use a calculator if you need, and remember the equation for calculating an average: total number (of punctuation), divided by the number of groups (number of sentences)):<br>
+"Serve your customers fresh coffee with this single serving stainless steel Vietnamese style coffee press! This coffee press includes a built-in filter so you can brew to the ideal strength, tightening the press for a stronger beverage, and loosening it to take the edge off. Its convenient design fits in the top rim of mugs or cups to deliver a single serving of your most popular coffee or tea. For versatility, this coffee press can be used with hot coffee, Vietnamese iced coffee, loose leaf tea, and more. And thanks to its stainless steel structure, you can be sure this coffee press can stand up to the rigors of day-to-day use."
 <div id='collapse-me', class='accordion-body collapse'>
 <br>
 <samp>Five</samp>
 </div>
 
-<br><button type="button" class="btn-info", id="collapser">peek <i class="fa fa-arrow-up"></i></button>
+<br><button type="button" class="btn-info", id="collapser1">peek <i class="fa fa-arrow-up"></i></button>
+{% endblock demonstration2 %}
 
 <h3></h3>
 <p>Sets of characters, words, or other useful items are called <i>N-grams</i>, and are very widely used in computational linguistics; however there is a specific module (the next one) dedicated to discussing these, and so they won't be covered in more depth here.  Specific words (<i><b>uni</b>-grams</i>, meaning <b>one</b> unit) can also be indicative of different authors.  Yet there are certain words which are more helpful than others.  Think of a situation in which one person is writing an article about golf, and then the same person is writing an different article about Tucson restaurants.  The same author wrote both articles, but there will be a lot of words about golf in one, and a lot of words about food in the other.  These words, called <i>content words</i> (they carry most of the information), will not be very helpful to match the two articles to the same author, because they are different.  However, other words, such as <i>the, in, with,</i> etc, will very likely be used in both articles.  These kind of words (called <i>function words</i>) are used by everybody in anything that is written, but often used differently, and in different <i>frequencies</i> from different people.  This makes them ideal for using as features.  Function words and content words will be discussed further in the module covering <i>Parts of Speech</i>.</p>
