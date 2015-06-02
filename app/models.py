@@ -7,6 +7,7 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column('user_id', db.Integer, primary_key=True)
     username = db.Column('username', db.String(20), unique=True , index=True)
+    password = db.Column('password', db.String(20), index=True)
     provider = db.Column('provider', db.String(10))
     email = db.Column('email',db.String(50), unique=True , index=True)
     registered_on = db.Column('registered_on' , db.DateTime)
@@ -20,23 +21,29 @@ class User(db.Model):
     # case_id = db.Column(db.Integer,db.ForeignKey('cases.id'))
 
 
-    def __init__(self,username,provider=None,email=None,xp=None,registration=None):
+    def __init__(self,username,password,xp=None,registration=None):
         self.username = username
-        if provider:
-            self.provider = provider
-        if email:
-            self.email = email
+        # if provider:
+        #     self.provider = provider
+        # if email:
+        #     self.email = email
+        self.password = password
         if xp:
             self.xp = xp
         if registration:
             self.registered_on = datetime.utcnow()
-        if User.query.filter_by(username=self.username).first().xp is None:
+        if User.query.filter_by(username=self.username).first() is None:
             self.xp = 0x001
-        print User.query.filter_by(username=self.username).first().user_rank
-        if User.query.filter_by(username=self.username).first().user_rank is None:
             self.user_rank = UserRank.query.filter_by(default=True).first()
-        if User.query.filter_by(username=self.username).first().level is None:
             self.level = Level.query.filter_by(default=True).first()
+        else:
+            if User.query.filter_by(username=self.username).first().xp is None:
+                self.xp = 0x001
+            # print User.query.filter_by(username=self.username).first().user_rank
+            if User.query.filter_by(username=self.username).first().user_rank is None:
+                self.user_rank = UserRank.query.filter_by(default=True).first()
+            if User.query.filter_by(username=self.username).first().level is None:
+                self.level = Level.query.filter_by(default=True).first()
 
     def add_admin(self):
         self.username = 'admin'

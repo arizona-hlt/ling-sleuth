@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, request, g, make_response, send_file, abort, send_from_directory, Response, Markup
 from flask.ext.login import login_user , logout_user , current_user , login_required
 from app import app, db, login_manager
-from .forms import LoginForm, RegisterForm
+from .forms import CreateLogin
 from .quizzes import *
 from .special_login import *
 from .models import User, UserRank, Level, Module, Quiz, Skill, QuestionLibrary as ql, AnswerLibrary as al
@@ -53,7 +53,8 @@ def login_with_provider(provider_name):
         # The rest happens inside the template.
         #result.user.data.x will return further user data
         username = User.query.filter_by(username=result.user.name).first()
-        return render_template('login-test.html', result=result, user=username)
+        return render_template('login-success.html',
+                                current_user=username)
 
     # Don't forget to return the response.
     return response
@@ -61,10 +62,33 @@ def login_with_provider(provider_name):
 @app.route('/login',methods=['GET','POST'])
 def login():
     #create the login form for administrators
-    form=AdminLogin()
+    cl = CreateLogin()
+    register_form = cl.create()
+
+    if request.method == 'POST' and register_form.validate():
+        print "YAYAYA"
+        if User.query.filter_by(username=register_form.login_info.username).first() is not None:
+            print "HUG?"
+            flash("Username already taken")
+        else:
+            print register_form.login_info.username
+            print register_form.login_info.password
+            register_user(register_form.login_info.username,register_form.login_info.password)
+            print "HDASFDS?D?SAF?"
+            current_user.username = register_form.login_info.username
+            return render_template('login-success.html',
+                                    current_user=register_form.login_info.username)
+
+    # elif request.method == 'POST' and login_form.validate():
+    #     print "HSDAYDF"
+    #     current_user.username = login_form.login_info.username
+    #     return render_template('login-success.html',
+    #                             current_user=login_form.login_info.username)
+
     # Choose a login provider
     return render_template('login.html',
-                            form=form)
+                            # logform=login_form,
+                            regform=register_form)
 
 
 
@@ -311,8 +335,8 @@ def handle_user(result):
         registered_user = register_user(result)
     login_user(registered_user)
 
-def register_user(result):
-    user = User(username=result.user.name, provider=result.provider.name, email=result.user.email, xp=0.001, registration=True)
+def register_user(username,password):
+    user = User(username=username, password=password, xp=0.001, registration=True)
     db.session.add(user)
     db.session.commit()
     flash("You've been registered!")
