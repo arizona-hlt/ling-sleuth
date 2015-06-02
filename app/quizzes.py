@@ -55,6 +55,7 @@ class Frequency(Form):
 
     quiz='frequency'
     score = Score(quiz)
+    # score.score()
 
 # Must manually create a physical class; inherits from the Form metaclass
 class Ngrams(Form):
@@ -62,6 +63,7 @@ class Ngrams(Form):
     # must manually specify the name of the quiz
     quiz = 'n-grams'
     score = Score(quiz)
+    # score.score()
 
     # Unfortunately, including this function (below) breaks the code - something with having an __init__
     # function does not allow the Fields to be bound.  Looks like we'll have to create a separate class
@@ -74,6 +76,7 @@ class PartOfSpeech(Form):
 
     quiz = 'part of speech'
     score = Score(quiz)
+    # score.score()
 
 
 class CreateForm():
