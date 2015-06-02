@@ -15,17 +15,20 @@ class Score:
 
     def __init__(self,quiz):
         # obtains the quiz object/table in the database
-        self.quiz = Quiz.query.filter_by(quiz=quiz).first()
-        # obtains the list of questions associated with the quiz
-        self.questions = self.quiz.questions 
-        # loops through each question to get each question's point value
-        # add to get the total number of points for the quiz
-        self.quiz_points = 0
-        for question in self.questions:
-            self.quiz_points += question.points
-        # obtains the point threshold / score at which someone can still pass the quiz, e.g. '0.90'
-        self.passing = self.quiz.passing_threshold
-        # dictionary that holds the information of the question if that question is incorrect
+        try:
+            self.quiz = Quiz.query.filter_by(quiz=quiz).first()
+            # obtains the list of questions associated with the quiz
+            self.questions = self.quiz.questions
+            # loops through each question to get each question's point value
+            # add to get the total number of points for the quiz
+            self.quiz_points = 0
+            for question in self.questions:
+                self.quiz_points += question.points
+            # obtains the point threshold / score at which someone can still pass the quiz, e.g. '0.90'
+            self.passing = self.quiz.passing_threshold
+            # dictionary that holds the information of the question if that question is incorrect
+        except:
+            print "Error instantiating quiz for {0}".format(quiz)        
         self.incorrect = {}
 
 
@@ -116,9 +119,3 @@ class CreateForm():
 # referenced in views.py, enabling it to access the quiz class based on the module name
 # We will need to change this when / if we have multiple quizzes per module.
 quiz_dict = {'n-grams':Ngrams,u'part of speech':PartOfSpeech,u'frequency':Frequency}
-
-
-
-
-
-
