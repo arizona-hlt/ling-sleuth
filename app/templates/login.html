@@ -10,13 +10,16 @@
 {% block content %}
 
 <div class="container">
-<h2>Normal User Login</h2>
+<h2>User Login</h2>
 	
 <a href="login/google"><img src="https://developers.google.com/identity/images/sign-in-with-google.png"></a>
 
-{% block special_login %}
-<h2>Special User Login</h2>
-{{ wtf.quick_form(form, form_type="vertical", horizontal_columns=('sm', 2, 4)) }}
-{% endblock special_login %}
 </div>
+
+<!-- <div class="container">
+{% block register %}
+<h2>Register</h2>
+{{ wtf.quick_form(regform, form_type="vertical", horizontal_columns=('sm', 2, 4)) }}
+{% endblock register %}
+</div> -->
 {% endblock content %}

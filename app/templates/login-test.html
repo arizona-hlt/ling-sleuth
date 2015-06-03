@@ -4,21 +4,20 @@
 
     <a href="/">Home</a>
 
-    {# Check for errors. #}
+    <!-- {# Check for errors. #}
     {% if result.error %}
-        <h2>Damn that error: {{ result.error.message }}</h2>
-    {% endif %}
+        <h2>Error: {{ result.error.message }}</h2>
+    {% endif %} -->
 
     {# Welcome the user. #}
-    {% if result.user %}
-        <h1>Hi {{ result.user.name }}</h1>
-        <h2>Your id is: {{ result.user.id }}</h2>
-        <h2>Your email is: {{ result.user.email }}</h2>
-        <h2>Your rank is: {{user.user_rank }}</h2>
+    {% if current_user %}
+        <h1>Hi {{ current_user.username }}</h1>
+        <h2>Your id is: {{ current_user.id }}</h2>
+        <h2>Your rank is: {{ current_user.user_rank }}</h2>
     {% endif %}
 
     {# If the user has credentials, we can access his/her protected resources. #}
-    {% if result.user.credentials %}
+    <!-- {% if result.user.credentials %}
 
         {# Let's get the user's 5 most recent statuses. #}
         {% if result.provider.name == 'fb' %}
@@ -73,6 +72,6 @@
             {% endif %}
 
         {% endif %}{# result.provider.name == 'tw' #}
-    {% endif %}{# result.user.credentials #}
+    {% endif %}{# result.user.credentials #}-->
 
 {%- endblock page_content %}

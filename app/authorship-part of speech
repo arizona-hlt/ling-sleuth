@@ -3,6 +3,25 @@
 
 {% block project_intro %}
 
+<p>Now you have access to n-grams as features!  You now have acces to the following features:</p>
+
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+
+<p>In addition to your previous features:</p>
+
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li>"CBG" (character bigrams)</li>
+<li>"CTG" (character trigrams)</li>
+
 {% endblock project_intro %}
 
 {% block demonstration %}

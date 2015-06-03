@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+
+    <a href="/">Home</a>
+
+
+    {# Welcome the user. #}
+    {% if current_user %}
+        <h1>Hi {{ current_user.username }}</h1>
+        <h2>Your id is: {{ current_user.id }}</h2>
+        <h2>Your rank is: {{ current_user.user_rank }}</h2>
+    {% endif %}
+
+
+{%- endblock page_content %}
