@@ -53,8 +53,7 @@ def login_with_provider(provider_name):
         # The rest happens inside the template.
         #result.user.data.x will return further user data
         username = User.query.filter_by(username=result.user.name).first()
-        return render_template('login-success.html',
-                                current_user=username)
+        return render_template('login-test.html', result=result, user=username)
 
     # Don't forget to return the response.
     return response
@@ -62,22 +61,24 @@ def login_with_provider(provider_name):
 @app.route('/login',methods=['GET','POST'])
 def login():
     #create the login form for administrators
-    cl = CreateLogin()
-    register_form = cl.create()
+    form=AdminLogin()
+    # Choose a login provider
+    return render_template('login.html',
+                            form=form)
+    #create the login form for administrators
+    # cl = CreateLogin()
+    # register_form = cl.create()
 
-    if request.method == 'POST' and register_form.validate():
-        print "YAYAYA"
-        if User.query.filter_by(username=register_form.login_info.username).first() is not None:
-            print "HUG?"
-            flash("Username already taken")
-        else:
-            print register_form.login_info.username
-            print register_form.login_info.password
-            register_user(register_form.login_info.username,register_form.login_info.password)
-            print "HDASFDS?D?SAF?"
-            current_user.username = register_form.login_info.username
-            return render_template('login-success.html',
-                                    current_user=register_form.login_info.username)
+    # if request.method == 'POST' and register_form.validate():
+        # if User.query.filter_by(username=register_form.login_info.username).first() is not None:
+        #     flash("Username already taken")
+        # else:
+            # print register_form.login_info.username
+            # print register_form.login_info.password
+            # register_user(register_form.login_info.username,register_form.login_info.password)
+            # current_user.username = register_form.login_info.username
+            # return render_template('login-success.html',
+            #                         current_user=register_form.login_info.username)
 
     # elif request.method == 'POST' and login_form.validate():
     #     print "HSDAYDF"
@@ -86,9 +87,9 @@ def login():
     #                             current_user=login_form.login_info.username)
 
     # Choose a login provider
-    return render_template('login.html',
-                            # logform=login_form,
-                            regform=register_form)
+    # return render_template('login.html',
+    #                         # logform=login_form,
+    #                         regform=register_form)
 
 
 
@@ -134,6 +135,12 @@ def profile():
     return render_template('profile.html',
                            title='Profile',
                            next_rank=next_rank)
+
+
+@app.route('/cases/<case>')
+def case_files(case):
+    return render_template('{}.html'.format(case))
+
 
 @app.route('/cases')
 def cases():
@@ -335,8 +342,14 @@ def handle_user(result):
         registered_user = register_user(result)
     login_user(registered_user)
 
-def register_user(username,password):
-    user = User(username=username, password=password, xp=0.001, registration=True)
+# def register_user(username,provider,email):
+#     user = User(username=username, provider=provider, email=email, xp=0.001, registration=True)
+#     db.session.add(user)
+#     db.session.commit()
+#     flash("You've been registered!")
+#     return user
+def register_user(result):
+    user = User(username=result.user.name, provider=result.provider.name, email=result.user.email, xp=0.001, registration=True)
     db.session.add(user)
     db.session.commit()
     flash("You've been registered!")

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block styles -%}
+{{ super() }}
+<link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
+{% endblock styles %}
+
+{% block content %}
+<h1>Harold Humphrey</h1>
+
+<h3>Case: Active</h3>
+
+<h2>Background</h2>
+
+<p>The body of Harold Humphrey was found on the University of Arizona campus near Gould-Simpson.  Police found a suicide note in Harold’s pocket and it appears he killed himself by jumping off the top of Gould-Simpson.  In his note Harold confesses to killing a linguistics professor, Dr. Kromsky, in the hit and run accident that occurred recently and writes that he is overcome with guilt. So far the police have not found any witnesses to the hit and run accident.  They believe Harold might be responsible for the accident but also suspect foul play because a coroner’s report shows that Harold received a black eye at least 48 hours before his death. 
+</p>
+
+<h2>Closing Remarks</h2>
+
+<p>TO BE DETERMINED...</p>
+{% endblock content %}

@@ -7,7 +7,7 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column('user_id', db.Integer, primary_key=True)
     username = db.Column('username', db.String(20), unique=True , index=True)
-    password = db.Column('password', db.String(20), index=True)
+    # password = db.Column('password', db.String(20), index=True)
     provider = db.Column('provider', db.String(10))
     email = db.Column('email',db.String(50), unique=True , index=True)
     registered_on = db.Column('registered_on' , db.DateTime)
@@ -21,13 +21,13 @@ class User(db.Model):
     # case_id = db.Column(db.Integer,db.ForeignKey('cases.id'))
 
 
-    def __init__(self,username,password,xp=None,registration=None):
+    def __init__(self,username,provider,email=None,xp=None,registration=None):
         self.username = username
-        # if provider:
-        #     self.provider = provider
-        # if email:
-        #     self.email = email
-        self.password = password
+        if provider:
+            self.provider = provider
+        if email:
+            self.email = email
+        # self.password = password
         if xp:
             self.xp = xp
         if registration:
