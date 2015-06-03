@@ -7,3 +7,4 @@ n-grams	5	Assistant Detective	Level-12	Introduction to N-grams!		0x005	M
 authorship-n-grams	6	Detective	Level-1	Application of n-gram features.		0x005	A
 part of speech	7	Detective	Level-6	Introduction to Parts of Speech!		0x005	M
 authorship-part of speech	8	Detective	Level-11	Application of part of speech features		0x006	A
+authorship-test	9	PI	Level-1	Testing the completed (and accurate) model		0x16	A

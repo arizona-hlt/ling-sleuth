@@ -1,0 +1,26 @@
+{% extends "projects.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block project_intro %}
+
+<p>You have access to all the features:</p>
+
+<li>"SPS" (sentence-initial part of speech)</li>
+<li>"PSU" (part of speech unigrams)</li>
+<li>"PSB" (part of speech bigrams)</li>
+<li>"PST" (part of speech trigrams)</li>
+<li>"FWF" (function word frequency)</li>
+<li>"CjF" (conjunction word frequency)</li>
+<li>"AWL" (average word length)</li>
+<li>"ASL" (average sentence length)</li>
+<li>"PF" (punctuation frequency)</li>
+<li>"FPF" (final punctuation frequency)</li>
+<li>"CF" (contraction frequency)</li>
+<li>"CBG" (character bigrams)</li>
+<li>"CTG" (character trigrams)</li>
+
+<p>Remember the combination of features that you used to correctly identify the previous killer.  This will train the accurate model that will correctly identify the current killer and solve the murder mystery!  Once you feel you've figured out the killer, return to the case page!</p>
+
+{% endblock project_intro %}
+
+{% block demonstration %}

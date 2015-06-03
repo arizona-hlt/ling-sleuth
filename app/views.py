@@ -139,13 +139,19 @@ def profile():
 
 @app.route('/cases/<case>')
 def case_files(case):
-    return render_template('{}.html'.format(case))
+    return render_template('{}.html'.format(case),
+                            user_rank=current_user.user_rank,
+                            xp = current_user.xp,
+                            solved_level = 44)
 
 
 @app.route('/cases')
 def cases():
     return render_template('cases.html',
-                           title='Cases')
+                           title='Cases',
+                            user_rank=current_user.user_rank,
+                            xp = current_user.xp,
+                            solved_level = 44)
 
 
 @app.route('/activity/text to spech/<data>')

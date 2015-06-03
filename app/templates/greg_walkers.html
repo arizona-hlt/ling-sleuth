@@ -1,22 +1,66 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+
 {% block styles -%}
 {{ super() }}
 <link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
 {%- endblock styles %}
 
-{% block title %}
-<h1>Greg Walker</h1>
+{% block title %} Greg Walkers {% endblock title %}
+{% block content %}
+<h1>Greg Walkers</h1>
 
 
 <h3>Case: Closed</h3>
-{% endblock title %}
-{% block content %}
+
+
 <h2>Background</h2>
 
-<p>bdsfadlf;sld</p>
+<p>Greg Walkers was a photographer for years after retiring from his job as a private detective.  He had travelled the world conducting photo shoots, most often for weddings.  He had very positive reviews from nearly all his clients, and seemingly had no enemies.</p>
+<p>Then one day his body was found sopping wet and washed up on the shore of the Rillito river.  An investigation began, and while the death was initially ruled a suicide due to a suicide note matching the nature of his death, but as his emails were recovered, a more serious investigation began.  It was discovered that Greg had just recently filed for bankrupcy, and there was a slow downward trend in his photography reviews over the past year.  His friends described his recent behavior as more distant, yet no one believed he could have killed himself.  His emails led to the discovery of three prime suspects.</p>
+
+
+<h3>First Clue: the suicide note</h3>
+
+<p>"Life is grey.  Has been for some time.  I cannot see.  I cannot feel.  I cannot taste anymore.  I put on a facade.  I have for so long.  Then I tried to live. I asked for help.  I screamed for help.  No one came.  I got no help.  I cannot take this colorless world.  The walls are closing in.  The water is closing in.  Goodbye."</p>
+
+<h3>Second Clue: an email from a former client</h3>
+<p>This man, Rob, had been waiting for two years to finally receive all the items he had paid Greg for, and had motivation to harm Greg.
+
+<p>"Hey, I have a few things that I really need to discuss with you. They're not something that can wait, say, another two years, again. Let's be adults, and finally get this taken care of. I had best be hearing from you very soon, else it may be time for some vigilante justice."</p>
+
+<h4>Response from victim</h4>
+
+<p>I beg of you to be patient with me I promise I will get you what you paid for its just that I cant afford it right now as I am broke myself due to working with the wrong crowd and making a mistake and I will be the first to admit I made a huge mistake. It is not your fault and you have been more than patient with me I just ask that you might give me a little more time.</p>
+
+<h3>Fourth Clue: an series of emails from a "friend"</h3>
+
+<p>"Hi there.  Long time no see.  I hoped I could get in touch with you sooner.  Did not seem to happen that way.  I have been trying to let you know for about a month.  There is a killer shoot happening down in Peru.  I know you have done business there before.  I thought you would want an excuse to go down there again.  I have the contract now.  Just need to sign it.  I can get you more details. If you are interested.  I cannot hold off signing this much longer."</p>
+
+
+<p>"He is in.  I told him to wire it in a week.  I told you.  He can be persuaded.  He is quite guillible.  Has been for some time.  As long as I have known him.   Now hold up your end of the bargain.  You get half.  I get half.  You set me up with a nice boat.  Give me safe passage.  Get me thru the inspections.  I will be on my way."</p>
+
+<h4>Response from victim to another friend:</h4>
+
+<p>I tell you what Frank I have never been this far into debt and its all because the scam I got pulled into in Peru as it was all Barry's fault that I was there in the first place. I never interacted directly with the clients but it was always through Barry and now I can see how foolish that was since I am pretty sure that Barry and his clients whether they ever existed or not are gone with my money.  He promised me a fantastic contract and I trusted him as I have for the last thirty five years Frank thirty five years and he had never led me astray before. I really dont know what to think anymore I really think I'm going to have to hire a private investigator.</p>
+
+<h4>Response from suspect 2 to another friend:</h4>
+
+<p>"This life is nice.  I enjoy a martini on the beach.  I got out of Peru safely.  It was close this time.  I had to scam an ex-friend for it.  I felt bad at the time.  Not any more.  I swear.  I am being followed. I think he taddled.  I did not escape just to be caught.  I may have to return his favor."</p>
+
+
+<h3>Fifth Clue: an email from a current client</h3>
+
+<p>"You are an awful human being. Everything you said was a huge lie.  I now know how you treat your clients.  You have kept your other patient client waiting two long years. I assure you. I will not be so patient. I have waited a long month. I had better have my wedding photographs in my hand by next week. Otherwise I will relentlessly hunt you down.  You will pay dearly for ruining my wedding."</p>
 
 <h2>Closing Remarks</h2>
 
-<p></p>
+<p>After a thorough investigation, the killer was identified, confessed, and arrested. Suspect 2 had met up with Greg, drown him, and placed the body at the Rillito, which explains why his clothes were wet since there was no water in the river.  Suspect 2, "Barry", realized that the private investigator hired by Greg was close to uncovering the evidence he needed to convict Barry on fraud charges, and so he came back to the states to "take care of" the problem.  He was getting ready to board a plane to go back to Indonesia when the authorities finally caught up with him and took him into custody.</p>
+
+<p>Now that we know who the killer is - and consequently the writer of the suicide note - we can use documents written by the suspects to "train" a model that represents the writing styles of the different authors (suspect), and use the model to identify the author of the suicide note.  Once the model is accurate (it correctly identifies the killer), you can then use it to correctly identify other authors. Namely, you'll be able to use it to solve your current case! </p>
+
+<p>You'll be learning about the features you'll need in order to do this.  Go ahead and proceed to "Learn" --> "Frequency", for your first lesson, {{user_rank}}!</p>
+
 {% endblock content %}
+
+

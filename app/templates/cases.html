@@ -16,12 +16,15 @@
 
 <h2>Completed Cases</h2>
 
-<li><a href="{{url_for( 'case_files', case = 'greg_walkers' )}}"> Greg Walker </a></li>
-<!-- <li><a href="{{url_for( 'tts', data = 'cmu_group_0' )}}"> Group 1 </a></li> -->
+<li><a href="{{url_for( 'case_files', case = 'greg_walkers' )}}"> Greg Walkers </a></li>
+{% if xp > solved_level %}
+	<li><a href="{{url_for('case_files', case = 'harold_humphrey')}}">Harold Humphrey</a></li>
+{% endif %}
 
 <h2>Active Cases</h2>
-
-<li><a href="{{url_for('case_files', case = 'harold_humphrey')}}">Harold Humphrey</a></li>
+{% if xp < solved_level %}
+	<li><a href="{{url_for('case_files', case = 'harold_humphrey')}}">Harold Humphrey</a></li>
+{% endif %}
 
 <!-- <h2>Closed Cases</h2>
 

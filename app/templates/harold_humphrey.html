@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+
 {% block styles -%}
 {{ super() }}
 <link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
-{% endblock styles %}
+{%- endblock styles %}
 
 {% block content %}
 <h1>Harold Humphrey</h1>
@@ -11,11 +12,70 @@
 <h3>Case: Active</h3>
 
 <h2>Background</h2>
+<p>On 5/15/2015 at 10 PM there was a fatal hit and run in front of the University of Arizona rec center.  An esteemed linguistics professor, having just finished a 12 km run on the treadmill was mowed down by a speeding vehicle that ran a red light.  There were no informative witnesses.</p>
+<p>Four days later, the body of Harold Humphrey was found on the University of Arizona campus near Gould-Simpson.  Police found a suicide note in Harold’s pocket and it appears he killed himself by jumping off the top of Gould-Simpson.  In his note Harold confesses to killing a linguistics professor, Dr. Kromsky, in the hit and run accident that occurred recently and writes that he is overcome with guilt. So far the police have not found any witnesses to the hit and run accident.  They believe Harold might be responsible for the accident but also suspect foul play because a coroner’s report shows that Harold received a black eye at least 48 hours before his death.</p>
 
-<p>The body of Harold Humphrey was found on the University of Arizona campus near Gould-Simpson.  Police found a suicide note in Harold’s pocket and it appears he killed himself by jumping off the top of Gould-Simpson.  In his note Harold confesses to killing a linguistics professor, Dr. Kromsky, in the hit and run accident that occurred recently and writes that he is overcome with guilt. So far the police have not found any witnesses to the hit and run accident.  They believe Harold might be responsible for the accident but also suspect foul play because a coroner’s report shows that Harold received a black eye at least 48 hours before his death. 
-</p>
+<h3>First Clue:  The Suicide Note</h3>
+ 
+<p>"Sorry mom and dad.  Your never going to understand.  There are things that you just can’t live with.  I can accept failure, everyone fails at something. But I can’t accept lying about my involvement.  I killed that professor and here’s the proof.  I think about it every night and day.  I believe it’s time to fly.  Just spread my wings…"</p>
+ 
+ 
+<p>The suicide note also seems suspicious and Harold’s mother is certain that he didn’t write it.  From interviewing Harold’s mother, we now know the following facts:</p>
+<li>Harold’s father died when he was younger.  Although his mother has remarried, he always calls his stepfather by his first name instead of “dad”</li>
+<li>Harold was a graduate student in the English department</li>
+<li>He was a TA for a writing course</li>
+<li>Harold had previously taken classes from Dr. Kromsky, the professor who he admitted to killing in the hit in run</li>
+<li>Harold’s car, a Mustang, is missing and police have not been able to recover it in order to determine if Harold was responsible for the accident or not.</li> 
+ 
+ 
+<h3>Second Clue: A letter from Lo Jazz</h3>
+ 
+<p>At Harold’s apartment we have found a torn up letter from someone named Lo Jazz.  We find from friends of Harold that Lo Jazz was a nickname for Harold’s roommate Louis, who is from New Orleans.  He is a former English graduate (in creative writing) student who dropped out after his first year after he started using/dealing drugs.  Although Harold and Lo Jazz usually got along very well, Harold’s friends say that he recently seemed more stressed and worried and guess that this might be due to roommate issues.</p>
+
+<p>"Harold,</p>
+
+<p>I know you got my stuff thus its about to get rough.   I need my 10 kilos or your knees are gonna blow.  Pop pop pop, you better stop stop stop playing this game before I make them forget your name.  Count your digits if you dig it, little piglet.  You know where to find me!</p>
+
+<p>Your in danger.  Better call a Texas ranger...dont pretend to be a stranger...</p>
+
+<p>Chronically,</p>
+
+<p>--LJ"</p>
+ 
+<h3>Third Clue: An email from an exchange student</h3>
+<p>We look at Harold’s CatMail account to see if he was planning on meeting anyone the day of his death.  We find an email from a student named Jerry Yan, who asked to meet Harold on Wednesday, the day he died.  The student is worried about being expelled or losing his student visa because of plagiarizing essays for the class Harold is a TA for. </p> 
+
+
+<p>"Dear esteemed Professor Humphrey,
+I hope you will reconsider my last schoolwork, give me another chance. You do not understand. If you sue me, I might lose my scholarship, and even my student visa. You will meet with me on Wednesday to talk about it then? I could rewrite the paper or doing extra work. Please reconsider it. My family will be very displeased.</p>
+ 
+<p>Sincerely,</p>
+<p>Jerry Yan"</p>
+
+ 
+<h3>Fourth Clue: e-mails from a student named Tom</h3>
+
+ 
+<p>"I saw what happened and I think I know why.  I’d like to talk about it with you in person. It was dark, but I think I got a good look at him.  I'm sorry I've been missing a lot this week. I've been disturbed, and I don't know who to reach out to."</p>
+
+<p>Facts about Tom:</p>
+<li>There are three different people named Thomas or Tom in Harold’s class</li>
+<li>The above email is the first in a series of emails.  It appears that Tom wanted to meet with Harold sometime later in the week, but no date or location was determined.</li>
+<li>We try to find writing samples from other people named Tom in the class.  We find from Harold’s attendance sheet in his office that one of the Toms was absent for several days the week the email was sent - the week of Harold's death.</li>
+
+
 
 <h2>Closing Remarks</h2>
+{% if xp < solved_level %}
+	<p>TO BE DETERMINED...</p>
+{% elif xp > solved_level %}
+	<p>Due to the model trained on the same features as before, we were able to identify the author of the suicide note as Tom, he was brought in for further questioning.  Once he was told that we knew he authored the suicide note, he confessed.</p>
+	<p>He said that he met Harold after class to find a better time and place to meet - which they decided upon the top of Gould-Simpson.  Tom said they got into some kind of argument and he accidentally pushed Harold over the side of the building.  Seemed a convenient story.</p>
+	<p>He was asked further as to why he included mention of Dr. Kromsky's death, and was told it would be better for him if he was truthful on his own accord.  He then confessed to everything.  It was he - Tom - who mowed down Professor Kromsky.  The reason was due to Tom's failing grade in the class, and the fact that he would lose his Basketball scholarship if Dr. Kromsky submitted that final grade.</p>
+	<p>He went to his class with Harold the following day.  The news of the hit and run had spread, and everyone was discussing it.  Harold admitted to his class that he had been witness to the hit and run and was going to go to the cops in a few days to tell them his story.  Tom realized that Harold's story had details that might lead the cops back to him.  He then proceeded to pretend that HE was a witness to the hit and run murder, and asked that Harold meet with him to talk about it.  When they met, Tom attacked Harold, giving him a black eye and knocking him out, prior to placing the suicide note in his pocket and knocking him off the building.</p>
+	<p>Tom had cleaned up the scene nicely, and had erased his tracks well.  If you hadn't found the lead - the evidence that Tom had written the suicide note, and not Harold - this mystery may very well have never been solved!</p>
+{% endif %}
 
-<p>TO BE DETERMINED...</p>
 {% endblock content %}
+
+
