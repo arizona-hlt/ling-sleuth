@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block styles -%}
+{% block styles %}
 {{ super() }}
 <link href="{{url_for('static', filename='css/definition_list.css')}}" rel="stylesheet">
-{%- endblock styles %}
+{% endblock styles %}
 
 {% block content %}
 <h1>Harold Humphrey</h1>
@@ -70,12 +70,12 @@ I hope you will reconsider my last schoolwork, give me another chance. You do no
 	<p>TO BE DETERMINED...</p>
 {% elif xp > solved_level %}
 	<p>Due to the model trained on the same features as before, we were able to identify the author of the suicide note as Tom, he was brought in for further questioning.  Once he was told that we knew he authored the suicide note, he confessed.</p>
-	<p>He said that he met Harold after class to find a better time and place to meet - which they decided upon the top of Gould-Simpson.  Tom said they got into some kind of argument and he accidentally pushed Harold over the side of the building.  Seemed a convenient story.</p>
+	<p>He said that he met Harold after class to find a better time and place to meet - which they decided upon the top of Gould-Simpson.  Tom said they got into some kind of argument and he accidentally pushed Harold over the side of the building.  Seemed a convenient story. Except that it wouldn't have given account for enough time for Harold's black eye to develop.  Additionally, the suicide note was in Harold's pocket before he fell from the building.</p>
 	<p>He was asked further as to why he included mention of Dr. Kromsky's death, and was told it would be better for him if he was truthful on his own accord.  He then confessed to everything.  It was he - Tom - who mowed down Professor Kromsky.  The reason was due to Tom's failing grade in the class, and the fact that he would lose his Basketball scholarship if Dr. Kromsky submitted that final grade.</p>
 	<p>He went to his class with Harold the following day.  The news of the hit and run had spread, and everyone was discussing it.  Harold admitted to his class that he had been witness to the hit and run and was going to go to the cops in a few days to tell them his story.  Tom realized that Harold's story had details that might lead the cops back to him.  He then proceeded to pretend that HE was a witness to the hit and run murder, and asked that Harold meet with him to talk about it.  When they met, Tom attacked Harold, giving him a black eye and knocking him out, prior to placing the suicide note in his pocket and knocking him off the building.</p>
 	<p>Tom had cleaned up the scene nicely, and had erased his tracks well.  If you hadn't found the lead - the evidence that Tom had written the suicide note, and not Harold - this mystery may very well have never been solved!</p>
 {% endif %}
-
+ 
 {% endblock content %}
 
 

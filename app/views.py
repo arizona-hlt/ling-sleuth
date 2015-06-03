@@ -142,7 +142,7 @@ def case_files(case):
     return render_template('{}.html'.format(case),
                             user_rank=current_user.user_rank,
                             xp = current_user.xp,
-                            solved_level = 44)
+                            solved_level = 50)
 
 
 @app.route('/cases')
@@ -151,7 +151,7 @@ def cases():
                            title='Cases',
                             user_rank=current_user.user_rank,
                             xp = current_user.xp,
-                            solved_level = 44)
+                            solved_level = 50)
 
 
 @app.route('/activity/text to spech/<data>')
